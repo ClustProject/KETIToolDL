@@ -1,5 +1,24 @@
 import os
-class InfluxDBTraining():
+
+def train(model_method, mode, DBClient, db_name, ms_name, bind_params, model_root_dir):
+    ###############
+    if model_method == 'brits':
+        from KETIToolDL.Model.Brits import makeModelBySource as MMS
+        trainer = MMS.BritsInfluxTraining(DBClient, model_root_dir)
+    ### TODO Add More Training Methods
+    else:
+        pass
+    ###############
+      
+    if mode == 'MS_Training':
+        ## train for Measurment
+        trainer.trainerForMS(db_name, ms_name, bind_params)
+    
+    elif mode == 'DB_Training':
+        ## train for Database
+        trainer.trainerForDB(db_name, bind_params)
+
+class trainModels():
     def __init__(self, dbClient, rootDir):
         self.DBClient = dbClient
         self.root_dir = rootDir

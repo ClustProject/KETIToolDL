@@ -13,7 +13,7 @@ sys.path.append("../..")
 sys.path.append("../../..")
 sys.path.append("../../../..")
 
-from KETIToolDL.Imputation.brits import Brits_model
+from KETIToolDL.Model.Brits import Brits_model
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
                                                                                                                                              
