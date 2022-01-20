@@ -7,19 +7,19 @@ import torch.optim as optim
 import numpy as np
 from tqdm import tqdm
 
-sys.path.append(".")
-sys.path.append("..")
-sys.path.append("../..")
+
 sys.path.append("../../..")
 sys.path.append("../../../..")
 
 from KETIToolDL.Model.Brits import Brits_model
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-                                                                                                                                             
 class BritsTraining():
     def __init__(self, data, json_path):
+        ## TODO MODIFY 1000
+        
         self.inputData = data[:1000]
+        print(self.inputData)
         self.json_path = json_path
  
     def train(self, epoch=100, learning_rate=0.01):
