@@ -1,6 +1,6 @@
 import os
 import sys
-import torch
+from multiprocessing import freeze_support
 sys.path.append(".")
 sys.path.append("..")
 sys.path.append("../..")
@@ -25,23 +25,25 @@ bind_params = {'end_time':last, 'start_time': first}
 model_rootDir = os.path.join('C:\\Users', 'bunny','Code_CLUST', 'DL', 'Models')
 model_rootDir = os.path.join(model_rootDir, model_purpose, model_method)
 
-###########################################
-#0. Define Trainer
-from KETIToolDL.Model.trainer import BritsTrainer
-ModelTrainer = BritsTrainer()
+if __name__ == '__main__':
+    freeze_support()
+    ###########################################
+    #0. Define Trainer
+    from KETIToolDL.Model.trainer import BritsTrainer
+    ModelTrainer = BritsTrainer()
 
-#1-1. Define Influx Trainer - MS Data Batch
-db_name = 'air_indoor_요양원'
-ms_name = 'ICL1L2000017'
-from KETIToolDL.BatchTrainer.influxDB import InfluxTrainer
-trainer = InfluxTrainer(DBClient, model_method, model_rootDir)
-trainer.setTrainer(ModelTrainer)
-trainer.trainerForMS(db_name, ms_name, bind_params)
+    #1-1. Define Influx Trainer - MS Data Batch
+    db_name = 'air_indoor_요양원'
+    ms_name = 'ICL1L2000017'
+    from KETIToolDL.BatchTrainer.influxDB import InfluxTrainer
+    trainer = InfluxTrainer(DBClient, model_method, model_rootDir)
+    trainer.setTrainer(ModelTrainer)
+    trainer.trainerForMS(db_name, ms_name, bind_params)
 
-###########################################
-#1-2. Define Influx Trainer - DB Data Batch
-db_name = 'air_indoor_요양원'
-trainer = InfluxTrainer(DBClient, model_method, model_rootDir)
-trainer.setTrainer(ModelTrainer)
-trainer.trainerForDB(db_name, bind_params)
+    ###########################################
+    #1-2. Define Influx Trainer - DB Data Batch
+    db_name = 'air_indoor_요양원'
+    trainer = InfluxTrainer(DBClient, model_method, model_rootDir)
+    trainer.setTrainer(ModelTrainer)
+    trainer.trainerForDB(db_name, bind_params)
 
