@@ -18,7 +18,7 @@ class BritsTraining():
     def __init__(self, data, json_path):
         ## TODO MODIFY 1000
         
-        self.inputData = data[:1000]
+        self.inputData = data
         print(self.inputData)
         self.json_path = json_path
  
@@ -48,9 +48,4 @@ class BritsTraining():
                 total_loss += ret["loss"]
             loss_graphic.append(total_loss.tolist())
             progress.set_description("loss: {:0.4f}".format(total_loss / len(data_iter)))
-
-        #### model save
-
-        # torch.save    (model.state_dict(), self.model_path)
-        
         return model

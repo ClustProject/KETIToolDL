@@ -9,14 +9,17 @@ class InfluxTrainer():
         self.trainer = trainer
 
     def trainerForDB(self, db_name, bind_params):
-        self.MSList = self.DBClient.measurement_list(self.db_name)
+        self.MSList = self.DBClient.measurement_list(db_name)
         for ms_name in self.MSList:
+            print(ms_name)
             self.trainerForMS(db_name, ms_name, bind_params)
 
     def trainerForMS(self, db_name, ms_name, bind_params):
         self.db_name = db_name
         self.ms_name = ms_name
         df = self.DBClient.get_data_by_time(bind_params, db_name, ms_name)
+        # TODDO Cleaning Soruce
+        ## df_clean = preprocessing(df)
         model_folder = self.setModelFolder()
         self.trainerForColumnData(df, model_folder)
 

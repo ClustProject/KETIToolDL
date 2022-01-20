@@ -24,6 +24,10 @@ class Trainer():
     def trainSaveModel(self, data):
         pass
 
+    def setTrainParameter(self, parameter=None):
+        self.parameter = parameter
+
+# Model 1: Brits
 from KETIToolDL.Model.Brits.training import BritsTraining
 import torch
 class BritsTrainer(Trainer):
