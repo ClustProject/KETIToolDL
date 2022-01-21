@@ -42,3 +42,6 @@ class BritsTrainer(Trainer):
         model = Brits.train()
         torch.save(model.state_dict(), self.model_path)
         print(self.model_path)
+
+    def setTrainParameter(self, parameter=None):
+        self.parameter = parameter

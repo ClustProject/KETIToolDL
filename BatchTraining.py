@@ -28,21 +28,21 @@ if __name__ == '__main__':
     ##########################################
     #0. Define Trainer
     from KETIToolDL.Model.trainer import BritsTrainer
-    ModelTrainer = BritsTrainer()
+    Brits = BritsTrainer()
     train_param = None
-    ModelTrainer.setTrainParameter(train_param)
+    Brits.setTrainParameter(train_param)
 
     #1-1. Define Influx Trainer - MS Data Batch
     db_name = 'air_indoor_요양원'
     ms_name = 'ICL1L2000017'
     from KETIToolDL.BatchTrainer.influxDB import InfluxTrainer
     trainer = InfluxTrainer(DBClient, model_method, model_rootDir)
-    trainer.setTrainer(ModelTrainer)
+    trainer.setTrainer(Brits)
     trainer.trainerForMS(db_name, ms_name, bind_params)
     ###########################################
     #1-2. Define Influx Trainer - DB Data Batch
     db_name = 'air_indoor_요양원'
     trainer = InfluxTrainer(DBClient, model_method, model_rootDir)
-    trainer.setTrainer(ModelTrainer)
+    trainer.setTrainer(Brits)
     trainer.trainerForDB(db_name, bind_params)
 
