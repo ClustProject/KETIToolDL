@@ -10,17 +10,23 @@ class Trainer():
     def setTrainParameter(self, parameter=None):
         self.parameter = parameter
 
-    def trainModel(self, model_folder, model_name, input, modelFileExtension):
+    def trainModel(self, input, model_folder, model_name, modelFileExtension):
         self.inputData  = input 
-        self._checkModelFolder(model_folder)
+        self.model_path = self._checkModelFolder(model_folder)
         self.trainData = self._processInputData(self.inputData)
-        self._setModelFilesName(model_folder, model_name, modelFileExtension)
+        self._setModelFilesName(self.model_path, model_name, modelFileExtension)
         self._trainSaveModel(self.trainData)
         print("Model Saved")
 
     def _checkModelFolder(self, model_folder):
-        if not os.path.exists(model_folder):
-            os.makedirs(model_folder) 
+        model_path =''
+        for add_folder in model_folder:
+            model_path = os.path.join(model_path, add_folder)
+
+        if not os.path.exists(model_path):
+            os.makedirs(model_path) 
+            
+        return model_path
         
     def _processInputData(self, inputData):
         trainData = inputData.copy()
@@ -49,7 +55,7 @@ class Trainer():
         pass
 
 # Model 1: Brits
-from KETIToolDL.Model.Brits.training import BritsTraining
+from KETIToolDL.TrainTool.Brits.training import BritsTraining
 import torch
 class BritsTrainer(Trainer):
     def _trainSaveModel(self, df): 

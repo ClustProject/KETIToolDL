@@ -4,8 +4,6 @@ from multiprocessing import freeze_support
 sys.path.append(".")
 sys.path.append("..")
 sys.path.append("../..")
-sys.path.append("../../..")
-sys.path.append("../../../..")
 
 from KETIPreDataIngestion.KETI_setting import influx_setting_KETI as ins
 from KETIPreDataIngestion.data_influx import influx_Client
@@ -13,38 +11,33 @@ from KETIPreDataIngestion.data_influx import influx_Client
 parameter = {
     "bind_params" :{'end_time':'2020-06-18 15:00:00', 'start_time': '2020-06-18 00:00:00'},
     "model_method":'brits', 
-    "model_rootDir": '/Git/DL/Models'
+    "modelFileExtension":['.json', '.pth'],
+    "modelRootPath": ['DL', 'Models'],
+    "modelAddPathLink":["model_method"]
 }
+
 if __name__ == '__main__':
     freeze_support()
     DBClient = influx_Client.influxClient(ins.CLUSTDataServer)
-
-    first ='2020-06-18 00:00:00'
-    last ='2020-06-18 15:00:00'
-    bind_params = {'end_time':last, 'start_time': first}
-    model_method = 'brits'
     
-    # Define Model Root Directory
-    model_rootDir = os.path.join('Git', 'DL', 'Models')
-    model_rootDir = os.path.join(model_rootDir, model_method)
     ##########################################
     #0. Define Trainer
-    from KETIToolDL.Model.trainer import BritsTrainer
+    from KETIToolDL.TrainTool.trainer import BritsTrainer
     Brits = BritsTrainer()
     train_param = None
     Brits.setTrainParameter(train_param)
-
     #1-1. Define Influx Trainer - MS Data Batch
     db_name = 'air_indoor_요양원'
     ms_name = 'ICL1L2000017'
-    from KETIToolDL.BatchTrainer.influxDBBatchTrainer import InfluxDBBatch
-    trainer = InfluxDBBatch(DBClient, model_rootDir)
+    from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
+    trainer = InfluxDBBatch(parameter, DBClient)
     trainer.setTrainMethod(Brits)
-    trainer.trainerForMSColumn(db_name, ms_name, bind_params)
+    trainer.trainerForMSColumn(db_name, ms_name, parameter['bind_params'])
+    
     ###########################################
     #1-2. Define Influx Trainer - DB Data Batch
     db_name = 'air_indoor_요양원'
-    trainer = InfluxDBBatch(DBClient, model_rootDir)
+    trainer = InfluxDBBatch(parameter, DBClient)
     trainer.setTrainMethod(Brits)
-    trainer.trainerForDBColumns(db_name, bind_params)
+    trainer.trainerForDBColumns(db_name, parameter['bind_param'])
 

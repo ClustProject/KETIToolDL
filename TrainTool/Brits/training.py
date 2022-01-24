@@ -7,11 +7,10 @@ import torch.optim as optim
 import numpy as np
 from tqdm import tqdm
 
-
 sys.path.append("../../..")
 sys.path.append("../../../..")
 
-from KETIToolDL.Model.Brits import Brits_model
+from KETIToolDL.TrainTool.Brits import Brits_model
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 class BritsTraining():

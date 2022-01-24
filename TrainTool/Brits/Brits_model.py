@@ -168,11 +168,9 @@ class Brits_i(nn.Module):
        
         ret['loss'] = loss
         ret['predictions'] = predictions
-        ret['imputations'] = imputations
-  
+        ret['imputations'] = imputations  
         return ret
 
-   
     def get_consistency_loss(self, pred_f, pred_b):
         loss = torch.abs(pred_f - pred_b).mean() * 1e-1
         return loss
