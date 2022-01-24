@@ -1,0 +1,4 @@
+first ='2020-06-18 00:00:00'
+last ='2020-06-18 15:00:00'
+bind_params = {'end_time':last, 'start_time': first}
+model_method = 'brits'

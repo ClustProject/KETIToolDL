@@ -1,13 +1,18 @@
-import os
-from batchTrainer import BatchTrainer
+import sys
+sys.path.append(".")
+sys.path.append("..")
+sys.path.append("../..")
+
+from KETIToolDL.BatchTool.batchTrainer import BatchTrainer
 
 class InfluxDBBatch(BatchTrainer):
-    def __init__(self, dbClient, model_rootDir):
+    def __init__(self, dbClient, model_rootDir, modelFileExtension):
         self.DBClient = dbClient
         self.model_rootDir = model_rootDir
+        self.modelFileExtension = modelFileExtension
 
-    def setTrainer(self, trainer):
-        self.trainer = trainer
+    def setTrainMethod(self, trainMethod):
+        self.trainer = trainMethod
 
     def trainerForDB(self, db_name, bind_params):
         self.MSList = self.DBClient.measurement_list(db_name)
@@ -25,7 +30,7 @@ class InfluxDBBatch(BatchTrainer):
 
         df = self.DBClient.get_data_by_time(bind_params, db_name, ms_name)
         model_name = ms_name
-        self.trainer.trainModel(model_folder, model_name, df[[model_name]])
+        self.trainer.trainModel(model_folder, model_name, df[[model_name]], self.modelFileExtension)
 
     def trainerForMSColumn(self, db_name, ms_name, bind_params):
         model_name_list=[db_name, ms_name]
@@ -35,6 +40,6 @@ class InfluxDBBatch(BatchTrainer):
 
         for column_name in df.columns:
             model_name = column_name    
-            self.trainer.trainModel(model_folder, model_name, df[[model_name]])
+            self.trainer.trainModel(model_folder, model_name, df[[model_name]], self.modelFileExtension)
 
     

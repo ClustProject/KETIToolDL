@@ -10,11 +10,11 @@ class Trainer():
     def setTrainParameter(self, parameter=None):
         self.parameter = parameter
 
-    def trainModel(self, model_folder, model_name, input):
+    def trainModel(self, model_folder, model_name, input, modelFileExtension):
         self.inputData  = input 
         self._checkModelFolder(model_folder)
         self.trainData = self._processInputData(self.inputData)
-        self._setModelFilesName(model_folder, model_name)
+        self._setModelFilesName(model_folder, model_name, modelFileExtension)
         self._trainSaveModel(self.trainData)
         print("Model Saved")
 
@@ -37,10 +37,14 @@ class Trainer():
         result = data
         return result
 
+    def _setModelFilesName(self, model_folder, model_name, modelFileExtension):
+        self.model_path=[]
+        for i, fileExtension in enumerate(modelFileExtension):
+            temp = model_name + fileExtension
+            self.model_path.append(os.path.join(model_folder, temp))
+        print(self.model_path)
+        
     ## Abstract 
-    def _setModelFilesName(self, model_folder, model_name):
-        pass
-
     def _trainSaveModel(self, data):
         pass
 
@@ -48,15 +52,9 @@ class Trainer():
 from KETIToolDL.Model.Brits.training import BritsTraining
 import torch
 class BritsTrainer(Trainer):
-    def _setModelFilesName(self, model_folder, model_name):
-        self.model_name = model_name + '.pth'
-        self.json_name = model_name  + '.json'
-        self.model_path =os.path.join(model_folder, self.model_name)
-        self.json_path = os.path.join(model_folder, self.json_name)
-
     def _trainSaveModel(self, df): 
-        Brits = BritsTraining(df, self.json_path)
+        Brits = BritsTraining(df, self.model_path[0])
         model = Brits.train()
-        torch.save(model.state_dict(), self.model_path)
+        torch.save(model.state_dict(), self.model_path[1])
         print(self.model_path)
 
