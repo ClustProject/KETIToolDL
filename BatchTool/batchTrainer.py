@@ -9,7 +9,7 @@ class BatchTrainer:
 
         modelFullDirRootPath = parameter['modelRootPath']
         for addPath in parameter['modelAddPathLink']:
-            modelFullDirRootPath.append(addPath)
+            modelFullDirRootPath.append(parameter[addPath])
 
         print(modelFullDirRootPath)
         return modelFullDirRootPath
