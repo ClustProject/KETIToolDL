@@ -12,26 +12,27 @@ class Trainer():
 
     def trainModel(self, input, PathInfo):
         self.inputData  = input 
-        self.model_path = self._checkModelFolder(PathInfo)
+        self.modelFolderpath = self._getModelFolder(PathInfo)
         self.trainData = self._processInputData(self.inputData)
-        self._setModelFilesName(self.model_path, PathInfo['ModelFileName'])
+        self._setModelFilesName(self.modelFolderpath, PathInfo['ModelFileName'])
         self._trainSaveModel(self.trainData)
         print("Model Saved")
 
-    def _checkModelFolder(self, PathInfo):
-        model_path =''
-
+    def _getModelFolder(self, PathInfo):
+        modelFolderpath =''
         for add_folder in PathInfo['ModelRootPath']:
-            model_path = os.path.join(model_path, add_folder)
-        for add_folder in PathInfo['TrainDataPath']:
-            model_path = os.path.join(model_path, add_folder)
+            modelFolderpath = os.path.join(modelFolderpath, add_folder)
         for add_folder in PathInfo['ModelInfoPath']:
-            model_path = os.path.join(model_path, add_folder)
+            modelFolderpath = os.path.join(modelFolderpath, add_folder)
+        for add_folder in PathInfo['TrainDataPath']:
+            modelFolderpath = os.path.join(modelFolderpath, add_folder)
+        self._checkModelFolder(modelFolderpath)
 
+        return modelFolderpath
+
+    def _checkModelFolder(self, model_path):
         if not os.path.exists(model_path):
             os.makedirs(model_path) 
-            
-        return model_path
     
     def _setModelFilesName(self, model_path, model_name_list):
         self.model_path=[]

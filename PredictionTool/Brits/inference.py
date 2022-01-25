@@ -1,26 +1,33 @@
+
 import torch
 import os
 from KETIToolDL.TrainTool.Brits import Brits_model
 import copy 
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+
+from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
+from KETIToolDL.TrainTool import modelSetting as ms
+
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 class BritsInference():
     def __init__(self, data, model_folder, column_name):
         self.inputData = data
         self.column_name = column_name
-        self.model_path = os.path.join(model_folder, column_name+'.pth')
-        self.json_path = os.path.join(model_folder, column_name+'.json')
+        modelParameter = ms.modelParameterInfoList['brits']
+        model_fileNames = modelParameter['model_fileName']
+        for i, model_fileName in enumerate(model_fileNames):
+            self.model_path[i] = os.path.join(model_folder, column_name, model_fileName)
 
     def get_result(self):
         output = self.inputData.copy()
-        if os.path.isfile(self.model_path):
+        if os.path.isfile(self.model_path[0]):
             print("Brits Model exists")
             loaded_model = Brits_model.Brits_i(108, 1, 0, len(output), device).to(device)
-            loaded_model.load_state_dict(copy.deepcopy(torch.load(self.model_path, device)))
+            loaded_model.load_state_dict(copy.deepcopy(torch.load(self.model_path[0], device)))
             
-            Brits_model.makedata(output, self.json_path)
-            data_iter = Brits_model.get_loader(self.json_path, batch_size=64)
+            Brits_model.makedata(output, self.model_path[1])
+            data_iter = Brits_model.get_loader(self.model_path[1], batch_size=64)
             
             result = self.predict_result(loaded_model, data_iter, device, output)
             result_list = result.tolist()

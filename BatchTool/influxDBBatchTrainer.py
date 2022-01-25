@@ -40,7 +40,7 @@ class InfluxDBBatch():
         PathInfo={}
         PathInfo['ModelRootPath'] = self.modelParameter['model_rootPath']
         PathInfo['ModelInfoPath'] = [self.modelParameter['model_method']]
-        PathInfo['TrainDataPath'] = [db_name, ms_name, column_name, str(bind_params)]
+        PathInfo['TrainDataPath'] = [db_name, ms_name, column_name]#, str(bind_params)]
         PathInfo['ModelFileName'] = self.modelParameter['model_fileName']
         
         return PathInfo
