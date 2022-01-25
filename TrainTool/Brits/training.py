@@ -1,14 +1,10 @@
 
 # 여기에는 독립적으로 모델을 생성하고 저장하는 부분만 기술되도록
 import sys
-import os
 import torch
 import torch.optim as optim
 import numpy as np
 from tqdm import tqdm
-
-sys.path.append("../../..")
-sys.path.append("../../../..")
 
 from KETIToolDL.TrainTool.Brits import Brits_model
 

@@ -10,24 +10,36 @@ class Trainer():
     def setTrainParameter(self, parameter=None):
         self.parameter = parameter
 
-    def trainModel(self, input, model_folder, model_name, modelFileExtension):
+    def trainModel(self, input, PathInfo):
         self.inputData  = input 
-        self.model_path = self._checkModelFolder(model_folder)
+        self.model_path = self._checkModelFolder(PathInfo)
         self.trainData = self._processInputData(self.inputData)
-        self._setModelFilesName(self.model_path, model_name, modelFileExtension)
+        self._setModelFilesName(self.model_path, PathInfo['ModelFileName'])
         self._trainSaveModel(self.trainData)
         print("Model Saved")
 
-    def _checkModelFolder(self, model_folder):
+    def _checkModelFolder(self, PathInfo):
         model_path =''
-        for add_folder in model_folder:
+
+        for add_folder in PathInfo['ModelRootPath']:
+            model_path = os.path.join(model_path, add_folder)
+        for add_folder in PathInfo['TrainDataPath']:
+            model_path = os.path.join(model_path, add_folder)
+        for add_folder in PathInfo['ModelInfoPath']:
             model_path = os.path.join(model_path, add_folder)
 
         if not os.path.exists(model_path):
             os.makedirs(model_path) 
             
         return model_path
+    
+    def _setModelFilesName(self, model_path, model_name_list):
+        self.model_path=[]
+        for i, model_name in enumerate(model_name_list):
+            self.model_path.append(os.path.join(model_path, model_name))
         
+        print(self.model_path)
+
     def _processInputData(self, inputData):
         trainData = inputData.copy()
         trainData = self._preprocessData(trainData)
@@ -43,12 +55,6 @@ class Trainer():
         result = data
         return result
 
-    def _setModelFilesName(self, model_folder, model_name, modelFileExtension):
-        self.model_path=[]
-        for i, fileExtension in enumerate(modelFileExtension):
-            temp = model_name + fileExtension
-            self.model_path.append(os.path.join(model_folder, temp))
-        print(self.model_path)
         
     ## Abstract 
     def _trainSaveModel(self, data):

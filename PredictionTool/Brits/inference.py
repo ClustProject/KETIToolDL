@@ -1,6 +1,6 @@
 import torch
 import os
-from KETIPrePartialDataPreprocessing.data_imputation.DL.brits import Brits_model
+from KETIToolDL.TrainTool.Brits import Brits_model
 import copy 
 import numpy as np
 from sklearn.preprocessing import StandardScaler
