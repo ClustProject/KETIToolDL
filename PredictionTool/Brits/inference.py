@@ -16,13 +16,17 @@ class BritsInference():
         self.column_name = column_name
         modelParameter = ms.modelParameterInfoList['brits']
         model_fileNames = modelParameter['model_fileName']
+        self.model_path={}
         for i, model_fileName in enumerate(model_fileNames):
-            self.model_path[i] = os.path.join(model_folder, column_name, model_fileName)
+            pathName = os.path.join(model_folder, model_fileName)
+            print(pathName)
+            self.model_path[i] = pathName
 
     def get_result(self):
         output = self.inputData.copy()
         if os.path.isfile(self.model_path[0]):
             print("Brits Model exists")
+            print(self.model_path[0])
             loaded_model = Brits_model.Brits_i(108, 1, 0, len(output), device).to(device)
             loaded_model.load_state_dict(copy.deepcopy(torch.load(self.model_path[0], device)))
             
