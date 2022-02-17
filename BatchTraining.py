@@ -7,7 +7,7 @@ sys.path.append("../..")
 
 from KETIPreDataIngestion.KETI_setting import influx_setting_KETI as ins
 from KETIPreDataIngestion.data_influx import influx_Client
-from KETIToolDL.TrainTool import modelSetting as ms
+from KETIToolDL import modelSetting as ms
 
 dataParameter = {
     "bind_params" :{'end_time':'2020-06-18 15:00:00', 'start_time': '2020-06-18 00:00:00'},

@@ -7,7 +7,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
-from KETIToolDL.TrainTool import modelSetting as ms
+from KETIToolDL import modelSetting as ms
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 class BritsInference():
@@ -28,10 +28,10 @@ class BritsInference():
             print("Brits Model exists")
             print(self.model_path[0])
             loaded_model = Brits_model.Brits_i(108, 1, 0, len(output), device).to(device)
-            loaded_model.load_state_dict(copy.deepcopy(torch.load(self.model_path[0], device)))
+            loaded_model.load_state_dict(copy.deepcopy(torch.load(self.model_path[1], device)))
             
-            Brits_model.makedata(output, self.model_path[1])
-            data_iter = Brits_model.get_loader(self.model_path[1], batch_size=64)
+            Brits_model.makedata(output, self.model_path[0])
+            data_iter = Brits_model.get_loader(self.model_path[0], batch_size=64)
             
             result = self.predict_result(loaded_model, data_iter, device, output)
             result_list = result.tolist()
