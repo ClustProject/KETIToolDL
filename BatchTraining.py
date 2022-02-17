@@ -22,7 +22,7 @@ if __name__ == '__main__':
     #0. Define Trainer
     from KETIToolDL.TrainTool.trainer import BritsTrainer
     Brits = BritsTrainer()
-    train_param = None
+    modelTrainParameter = None
     Brits.setTrainParameter(modelTrainParameter)
   
     from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
