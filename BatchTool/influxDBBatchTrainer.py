@@ -7,12 +7,13 @@ class InfluxDBBatch():
     def __init__(self, dbClient):
         self.DBClient = dbClient
 
-    def setParameter(self, dataParameter, modelParameter):
+    def setParameter(self, dataParameter, modelSetting):
         self.dataParameter = dataParameter
-        self.modelParameter = modelParameter
+        self.modelSetting = modelSetting
     
-    def setTrainMethod(self, trainMethod):
+    def setTrainMethod(self, trainMethod, method):
         self.trainer = trainMethod
+        self.method = method
 
     def batchTrain(self):
         db_name = self.dataParameter['db_name']
@@ -30,17 +31,14 @@ class InfluxDBBatch():
         bind_params = self.dataParameter['bind_params']
         ms_name = self.dataParameter['ms_name']
         db_name = self.dataParameter['db_name']
-        
         df = self.DBClient.get_data_by_time(bind_params, db_name, ms_name)
+        print(df)
         for column_name in df.columns: 
-            PathInfo = self.setPathInfo(db_name, ms_name, column_name, bind_params)
-            self.trainer.trainModel(df[[column_name]],  PathInfo)
+            trainDataPath = [db_name, ms_name, column_name]#, str(bind_params)]
+            
+            from KETIToolDL.ModelTool import modelFileManager
+            PathInfo = modelFileManager.setPathInfo(self.method, self.modelSetting, trainDataPath)
+            modelFilePath = modelFileManager.setModelFilesName(PathInfo)
+            self.trainer.trainModel(df[[column_name]],  modelFilePath)
     
-    def setPathInfo(self, db_name, ms_name, column_name, bind_params):
-        PathInfo={}
-        PathInfo['ModelRootPath'] = self.modelParameter['model_rootPath']
-        PathInfo['ModelInfoPath'] = [self.modelParameter['model_method']]
-        PathInfo['TrainDataPath'] = [db_name, ms_name, column_name]#, str(bind_params)]
-        PathInfo['ModelFileName'] = self.modelParameter['model_fileName']
-        
-        return PathInfo
+    

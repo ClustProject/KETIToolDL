@@ -10,35 +10,12 @@ class Trainer():
     def setTrainParameter(self, parameter=None):
         self.parameter = parameter
 
-    def trainModel(self, input, PathInfo):
+    def trainModel(self, input, modelFilePath):
         self.inputData  = input 
-        self.modelFolderpath = self.getModelFolder(PathInfo)
         self.trainData = self._processInputData(self.inputData)
-        self._setModelFilesName(self.modelFolderpath, PathInfo['ModelFileName'])
+        self.modelFilePath = modelFilePath 
         self._trainSaveModel(self.trainData)
         print("Model Saved")
-
-    def getModelFolder(self, PathInfo):
-        modelFolderpath =''
-        for add_folder in PathInfo['ModelRootPath']:
-            modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        for add_folder in PathInfo['ModelInfoPath']:
-            modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        for add_folder in PathInfo['TrainDataPath']:
-            modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        self._checkModelFolder(modelFolderpath)
-
-        return modelFolderpath
-
-    def _checkModelFolder(self, model_path):
-        if not os.path.exists(model_path):
-            os.makedirs(model_path) 
-    
-    def _setModelFilesName(self, model_path, model_name_list):
-        self.model_path=[]
-        for i, model_name in enumerate(model_name_list):
-            self.model_path.append(os.path.join(model_path, model_name))
-        print(self.model_path)
 
     def _processInputData(self, inputData):
         trainData = inputData.copy()
@@ -65,8 +42,8 @@ from KETIToolDL.TrainTool.Brits.training import BritsTraining
 import torch
 class BritsTrainer(Trainer):
     def _trainSaveModel(self, df): 
-        Brits = BritsTraining(df, self.model_path[0])
+        Brits = BritsTraining(df, self.modelFilePath[0])
         model = Brits.train()
-        torch.save(model.state_dict(), self.model_path[1])
-        print(self.model_path)
+        torch.save(model.state_dict(), self.modelFilePath[1])
+        print(self.modelFilePath)
 

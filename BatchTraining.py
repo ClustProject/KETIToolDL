@@ -16,12 +16,13 @@ dataParameter = {
 }
 
 ## for specific MS
+""""
 dataParameter = {
     "bind_params" :{'end_time':'2021-02-01 00:00:00', 'start_time': '2022-02-03 00:00:00'},
     "db_name":'air_indoor_경로당',
     "ms_name":"ICL1L2000235"
 }
-
+"""
 if __name__ == '__main__':
     freeze_support()
     DBClient = influx_Client.influxClient(ins.CLUSTDataServer)
@@ -34,10 +35,9 @@ if __name__ == '__main__':
   
     from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
     trainer = InfluxDBBatch(DBClient)
-    trainer.setTrainMethod(Brits)
-
-    modelParameter = ms.modelParameterInfoList['brits']
-    trainer.setParameter(dataParameter, modelParameter)
+    trainer.setTrainMethod(Brits, 'brits')
+    from KETIToolDL import modelSetting
+    trainer.setParameter(dataParameter, modelSetting)
     trainer.batchTrain()
     
 
