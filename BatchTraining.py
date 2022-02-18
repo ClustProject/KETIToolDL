@@ -9,15 +9,22 @@ from KETIPreDataIngestion.KETI_setting import influx_setting_KETI as ins
 from KETIPreDataIngestion.data_influx import influx_Client
 from KETIToolDL import modelSetting as ms
 
+## for AllMS of DB
 dataParameter = {
     "bind_params" :{'end_time':'2020-06-18 15:00:00', 'start_time': '2020-06-18 00:00:00'},
-    "db_name":'air_indoor_요양원'
+    "db_name":'air_indoor_경로당'
+}
+
+## for specific MS
+dataParameter = {
+    "bind_params" :{'end_time':'2021-02-01 00:00:00', 'start_time': '2022-02-03 00:00:00'},
+    "db_name":'air_indoor_경로당',
+    "ms_name":"ICL1L2000235"
 }
 
 if __name__ == '__main__':
     freeze_support()
     DBClient = influx_Client.influxClient(ins.CLUSTDataServer)
-    
     ##########################################
     #0. Define Trainer
     from KETIToolDL.TrainTool.trainer import BritsTrainer

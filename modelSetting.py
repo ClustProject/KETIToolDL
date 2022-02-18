@@ -1,4 +1,4 @@
-model_rootPath = ['DL', 'Models']
+model_rootPath = ["/Users", "jw_macmini", "CLUSTGit", "DL", "Models"]
 
 modelParameterInfoList = {
     "brits":{

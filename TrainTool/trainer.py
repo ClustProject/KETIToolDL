@@ -12,13 +12,13 @@ class Trainer():
 
     def trainModel(self, input, PathInfo):
         self.inputData  = input 
-        self.modelFolderpath = self._getModelFolder(PathInfo)
+        self.modelFolderpath = self.getModelFolder(PathInfo)
         self.trainData = self._processInputData(self.inputData)
         self._setModelFilesName(self.modelFolderpath, PathInfo['ModelFileName'])
         self._trainSaveModel(self.trainData)
         print("Model Saved")
 
-    def _getModelFolder(self, PathInfo):
+    def getModelFolder(self, PathInfo):
         modelFolderpath =''
         for add_folder in PathInfo['ModelRootPath']:
             modelFolderpath = os.path.join(modelFolderpath, add_folder)
@@ -38,7 +38,6 @@ class Trainer():
         self.model_path=[]
         for i, model_name in enumerate(model_name_list):
             self.model_path.append(os.path.join(model_path, model_name))
-        
         print(self.model_path)
 
     def _processInputData(self, inputData):

@@ -7,20 +7,26 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 
 from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
-from KETIToolDL import modelSetting as ms
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 class BritsInference():
-    def __init__(self, data, model_folder, column_name):
+    def __init__(self, data, column_name, model_path):
         self.inputData = data
         self.column_name = column_name
-        modelParameter = ms.modelParameterInfoList['brits']
-        model_fileNames = modelParameter['model_fileName']
-        self.model_path={}
-        for i, model_fileName in enumerate(model_fileNames):
-            pathName = os.path.join(model_folder, model_fileName)
-            print(pathName)
-            self.model_path[i] = pathName
+        self.model_path = model_path
+        #BritsModelFolder = os.path.join("/Users", "jw_macmini", "CLUSTGit", "DL", "Models",'brits','air_indoor_요양원', "ICL1L2000011",'in_ciai')
+
+    def getModelFolder(self, PathInfo):
+        modelFolderpath =''
+        for add_folder in PathInfo['ModelRootPath']:
+            modelFolderpath = os.path.join(modelFolderpath, add_folder)
+        for add_folder in PathInfo['ModelInfoPath']:
+            modelFolderpath = os.path.join(modelFolderpath, add_folder)
+        for add_folder in PathInfo['TrainDataPath']:
+            modelFolderpath = os.path.join(modelFolderpath, add_folder)
+        self._checkModelFolder(modelFolderpath)
+
+        return modelFolderpath
 
     def get_result(self):
         output = self.inputData.copy()

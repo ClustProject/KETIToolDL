@@ -30,7 +30,7 @@ class InfluxDBBatch():
         bind_params = self.dataParameter['bind_params']
         ms_name = self.dataParameter['ms_name']
         db_name = self.dataParameter['db_name']
-
+        
         df = self.DBClient.get_data_by_time(bind_params, db_name, ms_name)
         for column_name in df.columns: 
             PathInfo = self.setPathInfo(db_name, ms_name, column_name, bind_params)
