@@ -81,8 +81,9 @@ class BatchTraining():
                 
         for column_name in df.columns: 
             trainDataPath = [db_name, ms_name, column_name]#, str(bind_params)]
-            from KETIToolDL.ModelTool import modelFileManager
-            modelFilePath = modelFileManager.getmodelFilePath(trainDataPath, self.trainMethod)
+            from KETIToolDL import generalModelInfo
+            modelFilePath = generalModelInfo.getmodelFilePath(trainDataPath, self.trainMethod)
+
             self.trainer.trainModel(df[[column_name]],  modelFilePath)
     
     

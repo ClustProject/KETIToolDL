@@ -9,3 +9,24 @@ modelParameterInfoList = {
         "modelFileNames":['model.json', 'model.pth']
     }
 }
+
+
+import os
+def getmodelFilePath(trainDataPath, method):
+    modelInfo = modelParameterInfoList[method]
+    print(modelInfo['modelRootPath'])
+    
+    modelFullPath =modelInfo['modelRootPath']+modelInfo['modelInfoPath']+trainDataPath
+
+    modelFolderPath=''
+    for addfolder in modelFullPath:
+        modelFolderPath = os.path.join(modelFolderPath, addfolder)
+
+    if not os.path.exists(modelFolderPath):
+        os.makedirs(modelFolderPath)
+    
+    modelFilePath=[]
+    for i, model_name in enumerate(modelInfo['modelFileNames']):
+        modelFilePath.append(os.path.join(modelFolderPath, model_name))
+    return modelFilePath
+
