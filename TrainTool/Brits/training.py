@@ -23,6 +23,7 @@ class BritsTraining():
      
         Brits_model.makedata(self.inputData, self.json_path)
         data_iter = Brits_model.get_loader(self.json_path, batch_size=64)
+        length = len(self.inputData)
         model = Brits_model.Brits_i(108, 1, 0, length, device).to(device)
         
         # Brits_model.Brits_i(hidden_state_dim, impute_weight, label_weight, length, device)

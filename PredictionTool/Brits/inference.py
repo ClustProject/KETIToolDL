@@ -6,7 +6,7 @@ import copy
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
-from KETIToolDL.BatchTool.influxDBBatchTrainer import InfluxDBBatch
+from KETIToolDL.BatchTool.InfluxDB import BatchTraining
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 class BritsInference():
@@ -14,15 +14,14 @@ class BritsInference():
         self.inputData = data
         self.column_name = column_name
         self.model_path = model_path
-        #BritsModelFolder = os.path.join("/Users", "jw_macmini", "CLUSTGit", "DL", "Models",'brits','air_indoor_요양원', "ICL1L2000011",'in_ciai')
 
     def getModelFolder(self, PathInfo):
         modelFolderpath =''
-        for add_folder in PathInfo['ModelRootPath']:
+        for add_folder in PathInfo['modelRootPath']:
             modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        for add_folder in PathInfo['ModelInfoPath']:
+        for add_folder in PathInfo['modelRootPath']:
             modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        for add_folder in PathInfo['TrainDataPath']:
+        for add_folder in PathInfo['trainDataPath']:
             modelFolderpath = os.path.join(modelFolderpath, add_folder)
         self._checkModelFolder(modelFolderpath)
 

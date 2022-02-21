@@ -5,6 +5,8 @@ sys.path.append("../..")
 
 class Trainer():
     def __init__(self):
+        from multiprocessing import freeze_support
+        freeze_support() 
         pass
     
     def setTrainParameter(self, parameter=None):
@@ -12,12 +14,12 @@ class Trainer():
 
     def trainModel(self, input, modelFilePath):
         self.inputData  = input 
-        self.trainData = self._processInputData(self.inputData)
+        self.trainData = self.processInputData(self.inputData)
         self.modelFilePath = modelFilePath 
         self._trainSaveModel(self.trainData)
         print("Model Saved")
 
-    def _processInputData(self, inputData):
+    def processInputData(self, inputData):
         trainData = inputData.copy()
         trainData = self._preprocessData(trainData)
         trainData = self._transformData(trainData)
