@@ -15,18 +15,6 @@ class BritsInference():
         self.column_name = column_name
         self.model_path = model_path
 
-    def getModelFolder(self, PathInfo):
-        modelFolderpath =''
-        for add_folder in PathInfo['modelRootPath']:
-            modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        for add_folder in PathInfo['modelRootPath']:
-            modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        for add_folder in PathInfo['trainDataPath']:
-            modelFolderpath = os.path.join(modelFolderpath, add_folder)
-        self._checkModelFolder(modelFolderpath)
-
-        return modelFolderpath
-
     def get_result(self):
         output = self.inputData.copy()
         if os.path.isfile(self.model_path[0]):
