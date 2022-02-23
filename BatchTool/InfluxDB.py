@@ -44,7 +44,7 @@ class BatchTraining():
         train model by batch style. It can make model for all DB or only one MS.
 
         **Example**::
-            >>> trainer.setParameter(dataIngestionParameter, generalModelInfo)
+            >>> trainer.setParameter(dataIngestionParameter, modelInfo)
             >>> trainer.batchTrain()   
 
         """
@@ -81,8 +81,9 @@ class BatchTraining():
                 
         for column_name in df.columns: 
             trainDataPath = [db_name, ms_name, column_name]#, str(bind_params)]
-            from KETIToolDL import generalModelInfo
-            modelFilePath = generalModelInfo.getmodelFilePath(trainDataPath, self.trainMethod)
+            from KETIToolDL import modelInfo
+            MI = modelInfo.ModelFileManager()
+            modelFilePath = MI.getModelFilePath(trainDataPath, self.trainMethod)
 
             self.trainer.trainModel(df[[column_name]],  modelFilePath)
     
