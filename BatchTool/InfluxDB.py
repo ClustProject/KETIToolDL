@@ -69,7 +69,9 @@ class BatchTraining():
 
         if 'duration' in self.dataIngestionParameter:
             duration = self.dataIngestionParameter['duration']
-            df = self.DBClient.get_data_by_time(duration, db_name, ms_name)
+            start_time = duration['start_time']
+            end_time = duration['end_time']
+            df = self.DBClient.get_data_by_time(start_time, end_time, db_name, ms_name)
         
         elif 'number' in self.dataIngestionParameter:
             number = self.dataIngestionParameter['number'] 
