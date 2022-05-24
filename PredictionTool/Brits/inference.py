@@ -6,10 +6,12 @@ import copy
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 
-from KETIToolDL.BatchTool.InfluxDB import BatchTraining
+from KETIToolDL.PredictionTool.inference import Inference
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-class BritsInference():
+
+
+class BritsInference(Inference):
     def __init__(self, data, column_name, model_path):
         self.inputData = data
         self.column_name = column_name

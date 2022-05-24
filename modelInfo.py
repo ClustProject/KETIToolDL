@@ -46,8 +46,8 @@ class ModelFileManager():
             >>>  trainMethod ='brits'
             >>>  modelFilePath = MI.getModelFilePath(trainDataPath, self.trainMethod)
         """ 
-
         modelInfo = self.modelInfoList[method]
+        
         modelFullPath =modelInfo['modelRootPath']+modelInfo['modelInfoPath']+trainDataPath
         modelFolderPath=''
         for addfolder in modelFullPath:
