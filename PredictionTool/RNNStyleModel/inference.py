@@ -14,9 +14,11 @@ class RNNStyleModelInfernce(Inference):
         import torch
         self.infModel = IM.model
         self.infModel.load_state_dict(torch.load(modelFilePath[0]))
+        self.infModel.eval()
 
     def setData(self, data):
         self.data = data
+        print(data)
     
     def get_result(self):
         yhat = self.infModel(self.data)
