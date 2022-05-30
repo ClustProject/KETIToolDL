@@ -13,5 +13,9 @@ myModelInfoList = {
             "lstm":{
                 "modelRootPath": myModelRootPath, 
                 "modelInfoPath": ["lstm"],
+                "modelFileNames":['model_state_dict.pth']},
+            "gru":{
+                "modelRootPath": myModelRootPath, 
+                "modelInfoPath": ["gru"],
                 "modelFileNames":['model_state_dict.pth']}
 }

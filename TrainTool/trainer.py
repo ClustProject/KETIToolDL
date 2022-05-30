@@ -62,7 +62,7 @@ class RNNStyleModelTrainer(Trainer):
         trainX_arr, trainy_arr = LSTMD.transformXyArr(train, transformParameter, cleanParam)
         self.train_DataSet, self.train_loader = LSTMD.getTorchLoader(trainX_arr, trainy_arr,  batch_size)
 
-        valX_arr, valy_arr = LSTMD.transformXyArr(val, transformParameter)
+        valX_arr, valy_arr = LSTMD.transformXyArr(val, transformParameter, cleanParam)
         self.val_DataSet, self.val_loader = LSTMD.getTorchLoader(valX_arr, valy_arr, batch_size)
 
     def getModel(self, model_method):
