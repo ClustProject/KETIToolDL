@@ -28,13 +28,13 @@ class ModelFileManager():
         """ 
         self.modelInfoList = modelInfoList
 
-    def getModelFilePath(self, trainDataPath, method):
+    def getModelFilePath(self, trainDataPathList, method):
         """ get fullModelFilePath
         Ths function makes fullModelFilePath list.
-        TrainDataPath and other paths obtained by method can be used for creating fullModelFilePath.
+        trainDataPathList and other paths obtained by method can be used for creating fullModelFilePath.
 
-        :param trainDataPath: It includes train data information to generate model path
-        :type trainDataPath: list of str
+        :param trainDataPathList: It includes train data information to generate model path
+        :type trainDataPathList: list of str
 
         :param method: train method
         :type method: str
@@ -42,13 +42,13 @@ class ModelFileManager():
         example
             >>>  from KETIToolDL import modelInfo
             >>>  MI = modelInfo.ModelFileManager()
-            >>>  trainDataPath =['DBName', 'MSName', 'columnName' ]
+            >>>  trainDataPathList =['DBName', 'MSName', 'columnName' ]
             >>>  trainMethod ='brits'
-            >>>  modelFilePath = MI.getModelFilePath(trainDataPath, self.trainMethod)
+            >>>  modelFilePath = MI.getModelFilePath(trainDataPathList, self.trainMethod)
         """ 
         modelInfo = self.modelInfoList[method]
         
-        modelFullPath =modelInfo['modelRootPath']+modelInfo['modelInfoPath']+trainDataPath
+        modelFullPath =modelInfo['modelRootPath']+modelInfo['modelInfoPath']+trainDataPathList
         modelFolderPath=''
         for addfolder in modelFullPath:
             modelFolderPath = os.path.join(modelFolderPath, addfolder)

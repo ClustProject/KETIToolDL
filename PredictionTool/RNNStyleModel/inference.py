@@ -1,9 +1,21 @@
 from KETIToolDL.PredictionTool.inference import Inference
 import torch
+import numpy as np
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 class RNNStyleModelInfernce(Inference):
     # For small data without answer
     def __init__(self):
+        """
+            example: 
+            >>> from KETIToolDL.PredictionTool.RNNStyleModel.inference import RNNStyleModelInfernce
+            >>> Inference = RNNStyleModelInfernce()
+            >>> inference_input_scaledTensor = Inference.getTensorInput(inference_input_scaled)
+            >>> Inference.setData(inference_input_scaledTensor)
+            >>> Inference.setModel(trainParameter, model_method, modelFilePath)
+            >>> inference_result = Inference.get_result()
+            >>> print(inference_result)
+            
+        """
         self.batch_size = 1
     
     def setModel(self, trainParameter, model_method, modelFilePath):
@@ -15,6 +27,27 @@ class RNNStyleModelInfernce(Inference):
         self.infModel = IM.model
         self.infModel.load_state_dict(torch.load(modelFilePath[0]))
         self.infModel.eval()
+
+    def getTensorInput(self, data):
+        """The method get tensor input for training.
+
+        dataframe -> ndarray size = (past_step, len(feature_col_list)) -> 
+        ndarray size = (1, past_step, len(feature_col_list))  -> torch tensor
+
+        Note:
+            tensor input transformation
+
+        Args:
+            data (pd.DataFrame): input dataframe
+
+        Returns:
+            data (torch.utils.data.DataLoader): input tensor data
+        """
+        
+        inference_input = data.values.astype(np.float32)
+        inference_input = inference_input.reshape((-1, inference_input.shape[0], inference_input.shape[1]))
+        inference_input_tensor = torch.tensor(inference_input)
+        return inference_input_tensor
 
     def setData(self, data):
         self.data = data
@@ -61,7 +94,7 @@ class RNNStyleModelTestInference(Inference):
                 y_test = y_test.to(device)
                 self.infModel.eval()
                 yhat = self.infModel(x_test)
-                predictions.append(yhat.to(device).detach().numpy())
-                values.append(y_test.to(device).detach().numpy())
+                predictions.append(yhat.to(device).detach().numpy().ravel()[0])
+                values.append(y_test.to(device).detach().numpy().ravel()[0])
         return predictions, values
 

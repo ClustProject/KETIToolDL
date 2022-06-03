@@ -82,10 +82,10 @@ class BatchTraining():
             df = self.DBClient.get_datafront_by_num(number, db_name, ms_name)
                 
         for column_name in df.columns: 
-            trainDataPath = [db_name, ms_name, column_name]#, str(bind_params)]
+            trainDataPathList = [db_name, ms_name, column_name]#, str(bind_params)]
             from KETIToolDL import modelInfo
             MI = modelInfo.ModelFileManager()
-            modelFilePath = MI.getModelFilePath(trainDataPath, self.trainMethod)
+            modelFilePath = MI.getModelFilePath(trainDataPathList, self.trainMethod)
 
             self.trainer.trainModel(df[[column_name]],  modelFilePath)
     

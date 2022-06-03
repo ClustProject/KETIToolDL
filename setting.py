@@ -1,9 +1,8 @@
 # Modify this Path to make adaptive model path environment
 
-myModelRootPath = ["/Users", "jw_macmini", "CLUSTGit", "DL", "Models"]
-myModelRootPath = ["/Users", "bunnyjw", "Git", "DL", "Models"]
-myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','models']
-
+#myModelRootPath = ["/Users", "jw_macmini", "CLUSTGit", "DL", "Models"]
+#myModelRootPath = ["/Users", "bunnyjw", "Git", "DL", "Models"]
+myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JHTest', 'Models']
 #myModelRootPath = ["c:","Users", "bunny", "Code_CLUST", "KETIToolDL","DL", "Models"]
 myModelInfoList = {
             "brits":{

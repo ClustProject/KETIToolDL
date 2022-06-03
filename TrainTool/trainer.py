@@ -86,6 +86,7 @@ class RNNStyleModelTrainer(Trainer):
             'optimizer': optimizer.state_dict()
         }, model_rootPath + 'all.tar')  # 여러 가지 값 저장, 학습 중 진행 상황 저장을 위해 epoch, loss 값 등 일반 scalar값 저장 가능
         """
+        print(self.modelFilePath[0])
         torch.save(self.model.state_dict(), self.modelFilePath[0])  # 모델 객체의 state_dict 저장
         print(self.modelFilePath)
 
