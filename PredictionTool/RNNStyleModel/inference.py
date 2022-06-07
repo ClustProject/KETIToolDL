@@ -43,7 +43,7 @@ class RNNStyleModelInfernce(Inference):
         Returns:
             data (torch.utils.data.DataLoader): input tensor data
         """
-        
+        print(data)
         inference_input = data.values.astype(np.float32)
         inference_input = inference_input.reshape((-1, inference_input.shape[0], inference_input.shape[1]))
         inference_input_tensor = torch.tensor(inference_input)
