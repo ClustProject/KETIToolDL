@@ -28,6 +28,12 @@ class Trainer():
 
     # Very Important Main Function
     def trainModel(self, input, modelFilePath):
+        """
+        1. get input and model file path
+        2. train data and make model
+        3. save model
+
+        """
         self.inputData  = input 
         self.trainData = self.processInputData(self.inputData)
         self.modelFilePath = modelFilePath 
@@ -119,3 +125,38 @@ class RNNStyleModelTrainer(Trainer):
         print("Optimizer's state_dict:")
         for var_name in self.optimizer.state_dict():
             print(var_name, "\t", self.optimizer.state_dict()[var_name])
+
+
+class ClassificationML(Trainer):
+    def __init__(self):
+        import random
+        import numpy as np
+
+        # seed 고정
+        random_seed = 42
+
+        torch.manual_seed(random_seed)
+        torch.cuda.manual_seed(random_seed)
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        np.random.seed(random_seed)
+        random.seed(random_seed)
+
+    def processInputData(self, trainX, trainy, batch_size):
+        """
+        #trainX = datafarame
+        #trainy = dataframe
+        """
+        # trainx, trainy 를 배열화 시키는 코드
+
+        self.train_data = {'x': train_x, 'y': train_y}
+
+    def setTrainParameter(self, trainParameter=None):
+        pass
+
+    def trainModel(self, n_epochs, modelFilePath):
+        self.saveModel()
+        
+    def saveModel(self):
+        pass
+
