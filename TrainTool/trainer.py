@@ -131,7 +131,6 @@ class ClassificationML(Trainer):
     def __init__(self):
         import random
         import numpy as np
-
         # seed 고정
         random_seed = 42
 
@@ -141,6 +140,7 @@ class ClassificationML(Trainer):
         torch.backends.cudnn.benchmark = False
         np.random.seed(random_seed)
         random.seed(random_seed)
+        super().__init__()
 
     def processInputData(self, trainX, trainy, batch_size):
         """
