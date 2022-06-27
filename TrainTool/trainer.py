@@ -12,19 +12,19 @@ class Trainer():
     def getModel(self, model_method):
         self.model_method = model_method
 
-    def setTrainParameter(self, trainParameter=None):
+    def setTrainParameter(self, modelParameter=None):
         """
-        trainParameter is dictonary Type, its format is dependent on atrain method/
+        modelParameter is dictonary Type, its format is dependent on atrain method/
         
         example
-        >>> trainParameter = {'input_dim': input_dim,
+        >>> modelParameter = {'input_dim': input_dim,
                 'hidden_dim' : hidden_dim,
                 'layer_dim' : layer_dim,
                 'output_dim' : output_dim,
                 'dropout_prob' : dropout}
 
         """
-        self.trainParameter = trainParameter
+        self.modelParameter = modelParameter
 
     # Very Important Main Function
     def trainModel(self, input, modelFilePath):
@@ -51,6 +51,9 @@ class Trainer():
 # Model 1: Brits
 from KETIToolDL.TrainTool.Brits.training import BritsTraining
 import torch
+import torch.nn as nn
+import torch.optim as optim
+
 class BritsTrainer(Trainer):
     def _trainSaveModel(self, df): 
         Brits = BritsTraining(df, self.modelFilePath[0])
@@ -79,12 +82,10 @@ class RNNStyleModelTrainer(Trainer):
             "lstm": model.LSTMModel,
             "gru": model.GRUModel,
         }
-        self.model = models.get(model_method.lower())(**self.trainParameter)
+        self.model = models.get(model_method.lower())(**self.modelParameter)
         return self.model
 
     def saveModel(self): 
-
-        import torch
         """
         torch.save(model, model_rootPath + 'model.pt')  # 전체 모델 저장
         torch.save({
@@ -98,12 +99,11 @@ class RNNStyleModelTrainer(Trainer):
 
     def trainModel(self, n_epochs, modelFilePath):
         from KETIToolDL.TrainTool.RNN.optimizer import Optimization
-        from torch import optim
+        #from torch import optim
         self.modelFilePath = modelFilePath
         # Optimization
         weight_decay = 1e-6
         learning_rate = 1e-3
-        import torch.nn as nn
         loss_fn = nn.MSELoss(reduction="mean")
 
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate, weight_decay=weight_decay)
@@ -127,10 +127,11 @@ class RNNStyleModelTrainer(Trainer):
             print(var_name, "\t", self.optimizer.state_dict()[var_name])
 
 
+import numpy as np
+import pandas as pd
 class ClassificationML(Trainer):
     def __init__(self):
         import random
-        import numpy as np
         # seed 고정
         random_seed = 42
 
@@ -141,22 +142,183 @@ class ClassificationML(Trainer):
         np.random.seed(random_seed)
         random.seed(random_seed)
         super().__init__()
-
-    def processInputData(self, trainX, trainy, batch_size):
-        """
-        #trainX = datafarame
-        #trainy = dataframe
-        """
-        # trainx, trainy 를 배열화 시키는 코드
-
-        self.train_data = {'x': train_x, 'y': train_y}
-
-    def setTrainParameter(self, trainParameter=None):
-        pass
-
-    def trainModel(self, n_epochs, modelFilePath):
-        self.saveModel()
         
-    def saveModel(self):
-        pass
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        print(f"{self.device}" " is available.")
+
+    def processInputData(self, trainX, trainy, model_name, trainParameter):
+        """
+        :param trainX: train x data
+        :type trainX: Array
+        
+        :param trainy: train y data
+        :type trainy: Array
+        
+        :param model_name: model training method
+        :type model_name: string
+        
+        :param modelParameter: 선택한 Model의 Parameter
+        :type modelParamter: dictionary
+        
+        :param trainParameter: 모델 학습 Parameter
+        :type trainParameter: dictionary
+        """
+        from Classification.models.train_model import Train_Test
+        
+        self.model = model_name
+        self.trainParameter = trainParameter
+        
+        self.input_size = trainX.shape[1] # input size
+        if len(trainX.shape) == 3:
+            self.seq_length = trainX.shape[2] # seq_length
+        else:
+            self.seq_length = 0
+    
+        self.min_class = self.getClassRealMinNumber(trainy)
+
+        # load dataloder
+        batch_size = self.trainParameter['batch_size'] 
+        self.train_loader, self.valid_loader = self.get_loaders(trainX, trainy, batch_size=batch_size)
+
+        # build trainer
+        self.trainer = Train_Test(self.train_loader, self.valid_loader)
+
+    def getClassRealMinNumber(self, datay):
+        # class의 값이 0부터 시작하지 않으면 0부터 시작하도록 변환
+        min_class = 0
+        if np.min(datay) != 0:
+            min_class = np.min(datay)
+            print('Set start class as zero')
+            
+        return min_class 
+
+    def get_loaders(self, X, y, batch_size):
+        """
+        Get train, validation, and test DataLoaders
+        
+        :param train_data: train data with X and y
+        :type train_data: dictionary
+
+    
+        :param batch_size: batch size
+        :type batch_size: int
+
+        :return: train, validation, and test dataloaders
+        :rtype: DataLoader
+        """
+        
+        # class의 값이 0부터 시작하지 않으면 0부터 시작하도록 변환
+        y = y - self.min_class
+
+
+        # train data를 시간순으로 8:2의 비율로 train/validation set으로 분할
+        n_train = int(0.8 * len(X))
+        x_train, y_train = X[:n_train], y[:n_train]
+        x_valid, y_valid = X[n_train:], y[n_train:]
+
+        ## TODO 아래 코드 군더더기 저럴 필요 없음 어짜피 이 함수는 Train을 넣으면 Train, Valid 나누는 함수로 고정시키 때문에
+        # train/validation 데이터셋 구축
+        datasets = []
+        for dataset in [(x_train, y_train), (x_valid, y_valid)]:
+            x_data = np.array(dataset[0])
+            y_data = dataset[1]
+            datasets.append(torch.utils.data.TensorDataset(torch.Tensor(x_data), torch.Tensor(y_data)))
+
+        # train/validation DataLoader 구축
+        trainset, validset = datasets[0], datasets[1]
+        train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
+        valid_loader = torch.utils.data.DataLoader(validset, batch_size=batch_size, shuffle=True)
+        
+        return train_loader, valid_loader
+
+    def setTrainParameter(self, num_classes, modelParameter=None):
+        """
+        Set model parameter
+        
+        :param num_classes: number of classes
+        :type model_name: integer
+        
+        :param modelParameter: model parameter, its format is dependent on a train method
+        :type modelParameter: dictionary
+                
+        example
+        >>> modelParameter = {
+                                'num_layers': 2,
+                                'hidden_size': 64,
+                                'dropout': 0.1,
+                                'bidirectional': True,
+                                'lr': 0.0001
+                            }
+
+        """
+        
+        self.modelParameter = modelParameter
+        self.modelParameter["input_size"] = self.input_size 
+        self.modelParameter["num_classes"] = num_classes # 처음 입력 arg에 num_classes 를 넣어도 됨
+        
+        if self.model == 'LSTM':
+            self.modelParameter["rnn_type"] = 'lstm'
+            self.modelParameter["device"] = self.device
+        elif self.model == 'GRU':
+            self.modelParameter["rnn_type"] = 'gru'
+            self.modelParameter["device"] = self.device
+       
+    def getModel(self):
+        """
+        Build model and return initialized model for selected model_name
+        """
+        from Classification.models.lstm_fcn import LSTM_FCNs
+        from Classification.models.rnn import RNN_model
+        from Classification.models.cnn_1d import CNN_1D
+        from Classification.models.fc import FC
+        
+        # build initialized model
+        if (self.model == 'LSTM') | (self.model == "GRU"):
+            self.init_model = RNN_model(**self.modelParameter)
+        elif self.model == 'CNN_1D':
+            self.init_model = CNN_1D(**self.modelParameter)
+        elif self.model == 'LSTM_FCNs':
+            self.init_model = LSTM_FCNs(**self.modelParameter)
+        elif self.model == 'FC':
+            self.init_model = FC(**self.modelParameter)
+        else:
+            print('Choose the model correctly')
+            
+        return self.init_model
+    
+    def trainModel(self, modelFilePath):
+        """
+        Train model and return best model
+
+        :return: best trained model
+        :rtype: model
+        """
+
+        print("Start training model")
+        
+        self.modelFilePath = modelFilePath
+        # train model
+        self.init_model = self.init_model.to(self.device)
+
+        dataloaders_dict = {'train': self.train_loader, 'val': self.valid_loader}
+        criterion = nn.CrossEntropyLoss()
+        optimizer = optim.Adam(self.init_model.parameters(), lr=self.parameter['lr'])
+
+        best_model = self.trainer.train(self.init_model, dataloaders_dict, criterion, self.trainParameter, optimizer)
+        
+        self.saveModel(best_model)
+        
+        return best_model
+        
+    def saveModel(self, best_model):
+        """
+        Save the best trained model
+
+        :param best_model: best trained model
+        :type best_model: model
+
+        """
+
+        # save model
+        torch.save(best_model.state_dict(), self.modelFilePath)
 
