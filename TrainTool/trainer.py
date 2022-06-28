@@ -163,7 +163,7 @@ class ClassificationML(Trainer):
         :param trainParameter: 모델 학습 Parameter
         :type trainParameter: dictionary
         """
-        from Classification.models.train_model import Train_Test
+        from KETIToolDL.TrainTool.Classification.models.train_model import Train_Test
         
         self.model = model_name
         self.trainParameter = trainParameter
@@ -267,10 +267,10 @@ class ClassificationML(Trainer):
         """
         Build model and return initialized model for selected model_name
         """
-        from Classification.models.lstm_fcn import LSTM_FCNs
-        from Classification.models.rnn import RNN_model
-        from Classification.models.cnn_1d import CNN_1D
-        from Classification.models.fc import FC
+        from KETIToolDL.TrainTool.Classification.models.lstm_fcn import LSTM_FCNs
+        from KETIToolDL.TrainTool.Classification.models.rnn import RNN_model
+        from KETIToolDL.TrainTool.Classification.models.cnn_1d import CNN_1D
+        from KETIToolDL.TrainTool.Classification.models.fc import FC
         
         # build initialized model
         if (self.model == 'LSTM') | (self.model == "GRU"):
@@ -302,9 +302,10 @@ class ClassificationML(Trainer):
 
         dataloaders_dict = {'train': self.train_loader, 'val': self.valid_loader}
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(self.init_model.parameters(), lr=self.parameter['lr'])
+        optimizer = optim.Adam(self.init_model.parameters(), lr=self.modelParameter['lr'])
+        num_epochs = self.trainParameter["num_epochs"]
 
-        best_model = self.trainer.train(self.init_model, dataloaders_dict, criterion, self.trainParameter, optimizer)
+        best_model = self.trainer.train(self.init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
         
         self.saveModel(best_model)
         

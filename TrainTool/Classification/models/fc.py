@@ -8,7 +8,7 @@ from models.train_model import Train_Test
 
 
 class FC(nn.Module):
-    def __init__(self, input_size, drop_out, num_classes, bias):
+    def __init__(self, input_size, drop_out, num_classes, bias, **extra_model_param):
         """
         Args:
             input_size (int): input_size는 representation_size를 의미

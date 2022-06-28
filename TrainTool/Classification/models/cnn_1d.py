@@ -6,7 +6,7 @@ def calculate_output_length(input_seq, kernel_size, stride=1, padding=0, dilatio
     return (input_seq + 2 * padding - dilation * (kernel_size - 1) - 1) // stride + 1
 
 class CNN_1D(nn.Module):
-    def __init__(self, input_size, output_channels, kernel_size, stride, padding, drop_out, input_seq, num_classes):
+    def __init__(self, input_size, output_channels, kernel_size, stride, padding, drop_out, input_seq, num_classes, **extra_model_param):
         """
 
         Args:

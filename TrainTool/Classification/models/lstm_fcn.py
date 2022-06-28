@@ -25,7 +25,7 @@ class SELayer(nn.Module):
 
 class LSTM_FCNs(nn.Module):
     def __init__(self, *, n_time = 128, num_classes, input_size, num_lstm_out=64, num_layers,
-                conv1_nf=128, conv2_nf=128, conv3_nf=16, lstm_drop_p=0.8, fc_drop_p=0.3):
+                conv1_nf=128, conv2_nf=128, conv3_nf=16, lstm_drop_p=0.8, fc_drop_p=0.3, **extra_model_param):
         super(LSTM_FCNs, self).__init__()
         self.n_time = n_time
         self.num_classes = num_classes

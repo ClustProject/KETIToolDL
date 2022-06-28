@@ -8,7 +8,7 @@ import time
 import copy
 
 class RNN_model(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, num_classes, bidirectional, rnn_type, device='cuda'):
+    def __init__(self, input_size, hidden_size, num_layers, num_classes, bidirectional, rnn_type, device='cuda', **extra_model_param):
         super(RNN_model, self).__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
