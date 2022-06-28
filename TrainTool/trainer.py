@@ -173,8 +173,6 @@ class ClassificationML(Trainer):
             self.seq_length = trainX.shape[2] # seq_length
         else:
             self.seq_length = 0
-    
-        self.min_class = self.getClassRealMinNumber(trainy)
 
         # load dataloder
         batch_size = self.trainParameter['batch_size'] 
@@ -183,33 +181,21 @@ class ClassificationML(Trainer):
         # build trainer
         self.trainer = Train_Test(self.train_loader, self.valid_loader)
 
-    def getClassRealMinNumber(self, datay):
-        # class의 값이 0부터 시작하지 않으면 0부터 시작하도록 변환
-        min_class = 0
-        if np.min(datay) != 0:
-            min_class = np.min(datay)
-            print('Set start class as zero')
-            
-        return min_class 
-
     def get_loaders(self, X, y, batch_size):
         """
         Get train, validation, and test DataLoaders
         
+        - y class의 label 값이 0부터 시작한다는 가정하에 분류를 진행
+        
         :param train_data: train data with X and y
         :type train_data: dictionary
 
-    
         :param batch_size: batch size
         :type batch_size: int
 
         :return: train, validation, and test dataloaders
         :rtype: DataLoader
         """
-        
-        # class의 값이 0부터 시작하지 않으면 0부터 시작하도록 변환
-        y = y - self.min_class
-
 
         # train data를 시간순으로 8:2의 비율로 train/validation set으로 분할
         n_train = int(0.8 * len(X))
