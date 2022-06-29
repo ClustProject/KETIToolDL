@@ -307,5 +307,5 @@ class ClassificationML(Trainer):
         """
 
         # save model
-        torch.save(best_model.state_dict(), self.modelFilePath)
+        torch.save(best_model.state_dict(), self.modelFilePath[0])
 
