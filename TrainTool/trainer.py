@@ -242,10 +242,10 @@ class ClassificationML(Trainer):
         self.modelParameter["input_size"] = self.input_size 
         self.modelParameter["num_classes"] = num_classes # 처음 입력 arg에 num_classes 를 넣어도 됨
         
-        if self.model == 'LSTM':
+        if self.model == 'LSTM_cf':
             self.modelParameter["rnn_type"] = 'lstm'
             self.modelParameter["device"] = self.device
-        elif self.model == 'GRU':
+        elif self.model == 'GRU_cf':
             self.modelParameter["rnn_type"] = 'gru'
             self.modelParameter["device"] = self.device
        
@@ -259,13 +259,13 @@ class ClassificationML(Trainer):
         from KETIToolDL.TrainTool.Classification.models.fc import FC
         
         # build initialized model
-        if (self.model == 'LSTM') | (self.model == "GRU"):
+        if (self.model == 'LSTM_cf') | (self.model == "GRU_cf"):
             self.init_model = RNN_model(**self.modelParameter)
-        elif self.model == 'CNN_1D':
+        elif self.model == 'CNN_1D_cf':
             self.init_model = CNN_1D(**self.modelParameter)
-        elif self.model == 'LSTM_FCNs':
+        elif self.model == 'LSTM_FCNs_cf':
             self.init_model = LSTM_FCNs(**self.modelParameter)
-        elif self.model == 'FC':
+        elif self.model == 'FC_cf':
             self.init_model = FC(**self.modelParameter)
         else:
             print('Choose the model correctly')
