@@ -109,7 +109,7 @@ class RNNStyleModelTrainer(Trainer):
         self.optimizer = optim.Adam(self.model.parameters(), lr=learning_rate, weight_decay=weight_decay)
         opt = Optimization(model=self.model, loss_fn=loss_fn, optimizer=self.optimizer)
 
-        opt.train(self.train_loader, self.val_loader, batch_size=self.batch_size, n_epochs=n_epochs, n_features=self.trainParameter['input_dim'])
+        opt.train(self.train_loader, self.val_loader, batch_size=self.batch_size, n_epochs=n_epochs, n_features=self.modelParameter['input_dim'])
         opt.plot_losses()
         self.opt = opt
         # 모델의 state_dict 출력
