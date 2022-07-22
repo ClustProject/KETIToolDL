@@ -8,8 +8,8 @@
 # myModelRootPath = ['/programdrive','ProjectServer','KETIAppDataServer','model_Inference','models']
 
 #myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JHTest', 'Models']
-#myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JWTest', 'RNNStyleModelTest','Models']
-myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JSTest', 'ClassificationTest','KUDataClassification-main','Models']
+myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JWTest', 'RNNStyleModelTest','Models']
+#myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JSTest', 'ClassificationTest','KUDataClassification-main','Models']
 #myModelRootPath = ["c:","Users", "bunny", "Code_CLUST", "KETIToolDL","DL", "Models"]
 myModelInfoList = {
             "brits":{
