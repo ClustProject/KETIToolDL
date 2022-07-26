@@ -12,6 +12,15 @@ import torch.nn as nn
 class RegressionModelTestInference(Inference):
 
     def __init__(self, X, y, batch_size, device):
+        """
+        Set initial parameter for inference
+
+        :param batch_size: BatchSize for inference
+        :type batch_size: Integer
+        
+        :param device: device specification for inference
+        :type device: String
+        """
         self.X = X
         self.y = y 
         self.batch_size = batch_size
@@ -19,6 +28,12 @@ class RegressionModelTestInference(Inference):
         self.device = device
 
     def get_testLoader(self):
+        """
+        getTestLoader
+
+        :return: test_loader
+        :rtype: DataLoader
+        """
         
         x_data = np.array(self.X)
         y_data = self.y
@@ -28,7 +43,7 @@ class RegressionModelTestInference(Inference):
 
     def get_result(self, init_model, best_model_path):
         """
-        Predict class based on the best trained model
+        Predict RegresiionResult based on model result
         :param init_model: initialized model
         :type model: model
 
@@ -58,7 +73,7 @@ class RegressionModelTestInference(Inference):
     
     def get_inferenceResult(self, init_model, best_model_path):
         """
-        Predict class based on the best trained model
+        Predict RegresiionResult based on model result
         :param init_model: initialized model
         :type model: model
 
@@ -87,7 +102,7 @@ class RegressionModelTestInference(Inference):
 
     def test(self, model, test_loader):
         """
-        Predict classes for test dataset based on the trained model
+        Predict RegresiionResult for test dataset based on the trained model
 
         :param model: best trained model
         :type model: model
