@@ -5,53 +5,6 @@ from KETIToolDL.PredictionTool.inference import Inference
 from sklearn.metrics import mean_absolute_error, mean_squared_error 
 import torch.nn as nn
 
-class RegressionModelInference(Inference):
-
-    def __init__(self, device):
-        self.batch_size = 1
-        self.device = device
-    
-    def setModel(self, model, modelFilePath):
-        import torch
-        self.infModel = model
-        self.infModel.load_state_dict(torch.load(modelFilePath[0]))
-        self.infModel.eval()
-
-    def getTensorInput(self, data):
-        """The method get tensor input for training.
-
-        dataframe -> ndarray size = (past_step, len(feature_col_list)) -> 
-        ndarray size = (1, past_step, len(feature_col_list))  -> torch tensor
-
-        Note:
-            tensor input transformation
-
-        Args:
-            data (pd.DataFrame): input dataframe
-
-        Returns:
-            data (torch.utils.data.DataLoader): input tensor data
-        """
-        # TODO
-        if type(data) == 'object': #dataFrame ??
-            inference_input = data.values.astype(np.float32)
-        else:
-            inference_input = data
-        #inference_input = inference_input.reshape((-1, inference_input.shape[0], inference_input.shape[1]))
-        inference_input = data
-        print(inference_input.shape)
-        inference_input_tensor = torch.tensor(inference_input)
-        return inference_input_tensor
-
-    def setData(self, data):
-        self.data = data
-  
-    def get_result(self):
-        yhat = self.infModel(self.data)
-        result = yhat.to(self.device).detach().numpy()
-        return result
-
-
 class RegressionModelTestInference(Inference):
 
     def __init__(self, X, y, batch_size, device):
@@ -98,6 +51,35 @@ class RegressionModelTestInference(Inference):
         print(f'** Performance of test dataset ==> MSE = {mse}, MAE = {mae}')
         print(f'** Dimension of result for test dataset = {pred.shape}')
         return pred, mse, mae
+    
+    def get_inferenceResult(self, init_model, best_model_path):
+        """
+        Predict class based on the best trained model
+        :param init_model: initialized model
+        :type model: model
+
+        :param best_model_path: path for loading the best trained model
+        :type best_model_path: str
+
+        :return: predicted values
+        :rtype: numpy array
+
+        :return: test mse
+        :rtype: float
+
+        :return: test mae
+        :rtype: float
+        """
+
+        print("\nStart testing data\n")
+
+        # load best model
+        init_model.load_state_dict(torch.load(best_model_path[0]))
+
+        # get prediction and accuracy
+        # TODO simplication
+        pred, mse, mae = self.test(init_model, self.test_loader)
+        return pred
 
     def test(self, model, test_loader):
         """

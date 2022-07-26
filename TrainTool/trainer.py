@@ -316,8 +316,6 @@ import numpy as np
 class RegressionML(Trainer):
     
     def __init__(self, model_name, parameter):
-        
-
         import random
         # seed 고정
         random_seed = 42
@@ -377,7 +375,7 @@ class RegressionML(Trainer):
         self.valid_loader = torch.utils.data.DataLoader(validset, batch_size=batch_size, shuffle=True)
         
     
-    def build_model(self):
+    def getModel(self):
         from KETIToolDL.TrainTool.Regression.lstm_fcn import LSTM_FCNs
         from KETIToolDL.TrainTool.Regression.rnn import RNN_model
         from KETIToolDL.TrainTool.Regression.cnn_1d import CNN_1D
@@ -458,7 +456,7 @@ class RegressionML(Trainer):
         optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
 
         self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.parameter['device'])
-        self.save_model(self.best_model, modelFilePath)
+        self._trainSaveModel(self.best_model, modelFilePath)
         return self.best_model
     
 
@@ -556,7 +554,7 @@ class RegressionML(Trainer):
         model.load_state_dict(best_model_wts)
         return model     
 
-    def save_model(self, best_model, best_model_path):
+    def _trainSaveModel(self, best_model, best_model_path):
         """
         Save the best trained model
 
