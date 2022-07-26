@@ -129,7 +129,7 @@ class RNNStyleModelTrainer(Trainer):
 
 import numpy as np
 class ClassificationML(Trainer):
-    def __init__(self):
+    def __init__(self, model_name, parameter):
         import random
         # seed 고정
         random_seed = 42
@@ -142,10 +142,11 @@ class ClassificationML(Trainer):
         random.seed(random_seed)
         super().__init__()
         
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
-        print(f"{self.device}" " is available.")
+        self.device = parameter['device']
+        self.model_name = model_name
+        self.parameter = parameter
 
-    def processInputData(self, trainX, trainy, model_name, trainParameter):
+    def processInputData(self, train_X, train_y, batch_size):
         """
         :param trainX: train x data
         :type trainX: Array
@@ -162,39 +163,8 @@ class ClassificationML(Trainer):
         :param trainParameter: 모델 학습 Parameter
         :type trainParameter: dictionary
         """
-        from KETIToolDL.TrainTool.Classification.models.train_model import Train_Test
-        
-        self.model = model_name
-        self.trainParameter = trainParameter
-        
-        self.input_size = trainX.shape[1] # input size
-        if len(trainX.shape) == 3:
-            self.seq_length = trainX.shape[2] # seq_length
-        else:
-            self.seq_length = 0
-
-        # load dataloder
-        batch_size = self.trainParameter['batch_size'] 
-        self.train_loader, self.valid_loader = self.get_loaders(trainX, trainy, batch_size=batch_size)
-
-        # build trainer
-        self.trainer = Train_Test(self.train_loader, self.valid_loader)
-
-    def get_loaders(self, X, y, batch_size):
-        """
-        Get train, validation, and test DataLoaders
-        
-        - y class의 label 값이 0부터 시작한다는 가정하에 분류를 진행
-        
-        :param train_data: train data with X and y
-        :type train_data: dictionary
-
-        :param batch_size: batch size
-        :type batch_size: int
-
-        :return: train, validation, and test dataloaders
-        :rtype: DataLoader
-        """
+        X = train_X
+        y = train_y
 
         # train data를 시간순으로 8:2의 비율로 train/validation set으로 분할
         n_train = int(0.8 * len(X))
@@ -211,43 +181,11 @@ class ClassificationML(Trainer):
 
         # train/validation DataLoader 구축
         trainset, validset = datasets[0], datasets[1]
-        train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
-        valid_loader = torch.utils.data.DataLoader(validset, batch_size=batch_size, shuffle=True)
+        self.train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
+        self.valid_loader = torch.utils.data.DataLoader(validset, batch_size=batch_size, shuffle=True)
         
-        return train_loader, valid_loader
+        # return train_loader, valid_loader
 
-    def setTrainParameter(self, num_classes, modelParameter=None):
-        """
-        Set model parameter
-        
-        :param num_classes: number of classes
-        :type model_name: integer
-        
-        :param modelParameter: model parameter, its format is dependent on a train method
-        :type modelParameter: dictionary
-                
-        example
-        >>> modelParameter = {
-                                'num_layers': 2,
-                                'hidden_size': 64,
-                                'dropout': 0.1,
-                                'bidirectional': True,
-                                'lr': 0.0001
-                            }
-
-        """
-        
-        self.modelParameter = modelParameter
-        self.modelParameter["input_size"] = self.input_size 
-        self.modelParameter["num_classes"] = num_classes # 처음 입력 arg에 num_classes 를 넣어도 됨
-        
-        if self.model == 'LSTM_cf':
-            self.modelParameter["rnn_type"] = 'lstm'
-            self.modelParameter["device"] = self.device
-        elif self.model == 'GRU_cf':
-            self.modelParameter["rnn_type"] = 'gru'
-            self.modelParameter["device"] = self.device
-       
     def getModel(self):
         """
         Build model and return initialized model for selected model_name
@@ -257,21 +195,26 @@ class ClassificationML(Trainer):
         from KETIToolDL.TrainTool.Classification.models.cnn_1d import CNN_1D
         from KETIToolDL.TrainTool.Classification.models.fc import FC
         
+        if self.model_name == 'LSTM_cf':
+            self.parameter["rnn_type"] = 'lstm'
+        elif self.model_name == 'GRU_cf':
+            self.parameter["rnn_type"] = 'gru'
+        
         # build initialized model
-        if (self.model == 'LSTM_cf') | (self.model == "GRU_cf"):
-            self.init_model = RNN_model(**self.modelParameter)
-        elif self.model == 'CNN_1D_cf':
-            self.init_model = CNN_1D(**self.modelParameter)
-        elif self.model == 'LSTM_FCNs_cf':
-            self.init_model = LSTM_FCNs(**self.modelParameter)
-        elif self.model == 'FC_cf':
-            self.init_model = FC(**self.modelParameter)
+        if (self.model_name == 'LSTM_cf') | (self.model_name == "GRU_cf"):
+            init_model = RNN_model(**self.parameter)
+        elif self.model_name == 'CNN_1D_cf':
+            init_model = CNN_1D(**self.parameter)
+        elif self.model_name == 'LSTM_FCNs_cf':
+            init_model = LSTM_FCNs(**self.parameter)
+        elif self.model_name == 'FC_cf':
+            init_model = FC(**self.parameter)
         else:
             print('Choose the model correctly')
             
-        return self.init_model
+        return init_model
     
-    def trainModel(self, modelFilePath):
+    def trainModel(self, init_model, modelFilePath, num_epochs):
         """
         Train model and return best model
 
@@ -281,22 +224,20 @@ class ClassificationML(Trainer):
 
         print("Start training model")
         
-        self.modelFilePath = modelFilePath
+        
         # train model
-        self.init_model = self.init_model.to(self.device)
+        init_model = init_model.to(self.device)
 
         dataloaders_dict = {'train': self.train_loader, 'val': self.valid_loader}
         criterion = nn.CrossEntropyLoss()
-        optimizer = optim.Adam(self.init_model.parameters(), lr=self.modelParameter['lr'])
-        num_epochs = self.trainParameter["num_epochs"]
-
-        best_model = self.trainer.train(self.init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
+        optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
+        self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
         
-        self.saveModel(best_model)
+        self._trainSaveModel(self.best_model, modelFilePath)
         
-        return best_model
+        return self.best_model
         
-    def saveModel(self, best_model):
+    def _trainSaveModel(self, best_model, modelFilePath):
         """
         Save the best trained model
 
@@ -306,7 +247,108 @@ class ClassificationML(Trainer):
         """
 
         # save model
-        torch.save(best_model.state_dict(), self.modelFilePath[0])
+        torch.save(best_model.state_dict(), modelFilePath[0])
+        
+    def train(self, model, dataloaders, criterion, num_epochs, optimizer, device):
+        import time
+        import copy
+        """
+        Train the model
+
+        :param model: initialized model
+        :type model: model
+
+        :param dataloaders: train & validation dataloaders
+        :type dataloaders: dictionary
+
+        :param criterion: loss function for training
+        :type criterion: criterion
+
+        :param num_epochs: the number of train epochs
+        :type num_epochs: int
+
+        :param optimizer: optimizer used in training
+        :type optimizer: optimizer
+
+        :return: trained model
+        :rtype: model
+        """
+
+        since = time.time()
+
+        val_acc_history = []
+
+        best_model_wts = copy.deepcopy(model.state_dict())
+        best_acc = 0.0
+
+        for epoch in range(num_epochs):
+            if epoch == 0 or (epoch + 1) % 10 == 0:
+                print()
+                print('Epoch {}/{}'.format(epoch + 1, num_epochs))
+
+            # 각 epoch마다 순서대로 training과 validation을 진행
+            for phase in ['train', 'val']:
+                if phase == 'train':
+                    model.train()  # 모델을 training mode로 설정
+                else:
+                    model.eval()   # 모델을 validation mode로 설정
+
+                running_loss = 0.0
+                running_corrects = 0
+                running_total = 0
+
+                # training과 validation 단계에 맞는 dataloader에 대하여 학습/검증 진행
+                for inputs, labels in dataloaders[phase]:
+                    inputs = inputs.to(device)
+                    labels = labels.to(device, dtype=torch.long)
+                    # seq_lens = seq_lens.to(self.parameter['device'])
+                    
+                    # parameter gradients를 0으로 설정
+                    optimizer.zero_grad()
+
+                    # forward
+                    # training 단계에서만 gradient 업데이트 수행
+                    with torch.set_grad_enabled(phase == 'train'):
+                        # input을 model에 넣어 output을 도출한 후, loss를 계산함
+                        outputs = model(inputs)
+                        loss = criterion(outputs, labels)
+
+                        # output 중 최댓값의 위치에 해당하는 class로 예측을 수행
+                        _, preds = torch.max(outputs, 1)
+
+                        # backward (optimize): training 단계에서만 수행
+                        if phase == 'train':
+                            loss.backward()
+                            optimizer.step()
+
+                    # batch별 loss를 축적함
+                    running_loss += loss.item() * inputs.size(0)
+                    running_corrects += torch.sum(preds == labels.data)
+                    running_total += labels.size(0)
+
+                # epoch의 loss 및 accuracy 도출
+                epoch_loss = running_loss / running_total
+                epoch_acc = running_corrects.double() / running_total
+
+                if epoch == 0 or (epoch + 1) % 10 == 0:
+                    print('{} Loss: {:.4f} Acc: {:.4f}'.format(phase, epoch_loss, epoch_acc))
+
+                # validation 단계에서 validation loss가 감소할 때마다 best model 가중치를 업데이트함
+                if phase == 'val' and epoch_acc > best_acc:
+                    best_acc = epoch_acc
+                    best_model_wts = copy.deepcopy(model.state_dict())
+                if phase == 'val':
+                    val_acc_history.append(epoch_acc)
+
+
+        # 전체 학습 시간 계산
+        time_elapsed = time.time() - since
+        print('\nTraining complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
+        print('Best val Acc: {:4f}'.format(best_acc))
+
+        # validation loss가 가장 낮았을 때의 best model 가중치를 불러와 best model을 구축함
+        model.load_state_dict(best_model_wts)
+        return model
 
 class RegressionInferenceML():
     def __init__(self, model_name):

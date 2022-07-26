@@ -3,9 +3,6 @@ import numpy as np
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from models.train_model import Train_Test
-
-
 
 class FC(nn.Module):
     def __init__(self, input_size, drop_out, num_classes, bias, **extra_model_param):
