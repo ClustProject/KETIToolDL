@@ -316,6 +316,15 @@ import numpy as np
 class RegressionML(Trainer):
     
     def __init__(self, model_name, parameter):
+        """
+        Set initial parameter and model name for training
+
+        :param model_name: Model Name
+        :type model_name: String
+        
+        :param parameter: parameter
+        :type parameter: Dictionary
+        """
         import random
         # seed 고정
         random_seed = 42
@@ -335,20 +344,16 @@ class RegressionML(Trainer):
 
     def processInputData(self, train_X, train_y, batch_size):
         """
-        :param trainX: train x data
+        Prepare and set Input Data
+        :param trainX: train_X data
         :type trainX: Array
         
-        :param trainy: train y data
+        :param trainy: train_y data
         :type trainy: Array
         
-        :param model_name: model training method
-        :type model_name: string
-        
-        :param modelParameter: 선택한 Model의 Parameter
-        :type modelParamter: dictionary
-        
-        :param trainParameter: 모델 학습 Parameter
-        :type trainParameter: dictionary
+        :param batch_size: batch_size
+        :type batch_size: integer
+    
         """
         
         # load dataloder
@@ -376,6 +381,10 @@ class RegressionML(Trainer):
         
     
     def getModel(self):
+        """
+        Build model and return initialized model for selected model_name
+    
+        """
         from KETIToolDL.TrainTool.Regression.lstm_fcn import LSTM_FCNs
         from KETIToolDL.TrainTool.Regression.rnn import RNN_model
         from KETIToolDL.TrainTool.Regression.cnn_1d import CNN_1D
@@ -440,6 +449,12 @@ class RegressionML(Trainer):
 
         :param init_model: initialized model
         :type init_model: model
+
+        :param modelFilePath: model file path to be saved
+        :type modelFilePath: string
+
+        :param num_epochs: number of epochs
+        :type modelFilePath: integer
 
         :return: best trained model
         :rtype: model
