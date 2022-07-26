@@ -8,7 +8,7 @@
 # myModelRootPath = ['/programdrive','ProjectServer','KETIAppDataServer','model_Inference','models']
 
 #myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JHTest', 'Models']
-myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JWTest', 'RNNStyleModelTest','Models']
+myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JWTest','Models']
 #myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JSTest', 'ClassificationTest','KUDataClassification-main','Models']
 #myModelRootPath = ["c:","Users", "bunny", "Code_CLUST", "KETIToolDL","DL", "Models"]
 myModelInfoList = {
@@ -44,6 +44,26 @@ myModelInfoList = {
             "FC_cf":{
                 "modelRootPath": myModelRootPath, 
                 "modelInfoPath": ["FC_cf"],
+                "modelFileNames":['model.pt']},
+            # Regression Model
+            "LSTM_rg":{
+                "modelRootPath": myModelRootPath, 
+                "modelInfoPath": ["LSTM_rg"],
+                "modelFileNames":['model.pt']},
+            "GRU_rg":{
+                "modelRootPath": myModelRootPath, 
+                "modelInfoPath": ["GRU_rg"],
+                "modelFileNames":['model.pt']},
+            "CNN_1D_rg":{
+                "modelRootPath": myModelRootPath, 
+                "modelInfoPath": ["CNN_1D_rg"],
+                "modelFileNames":['model.pt']},
+            "LSTM_FCNs_rg":{
+                "modelRootPath": myModelRootPath, 
+                "modelInfoPath": ["LSTM_FCNs_rg"],
+                "modelFileNames":['model.pt']},
+            "FC_rg":{
+                "modelRootPath": myModelRootPath, 
+                "modelInfoPath": ["FC_rg"],
                 "modelFileNames":['model.pt']}
-
 }

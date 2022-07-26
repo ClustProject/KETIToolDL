@@ -315,7 +315,7 @@ class RegressionInferenceML():
 import numpy as np
 class RegressionML(Trainer):
     
-    def __init__(self, model_name, parameter, train_parameter):
+    def __init__(self, model_name, parameter):
         
 
         import random
@@ -333,10 +333,9 @@ class RegressionML(Trainer):
         self.device = parameter['device']
         self.model_name = model_name
         self.parameter = parameter
-        self.train_parameter = train_parameter
 
 
-    def processInputData(self, train_X, train_y):
+    def processInputData(self, train_X, train_y, batch_size):
         """
         :param trainX: train x data
         :type trainX: Array
@@ -358,7 +357,6 @@ class RegressionML(Trainer):
         
         X= train_X
         y = train_y
-        batch_size = self.train_parameter['batch_size']
         
         # train data를 시간순으로 8:2의 비율로 train/validation set으로 분할
         n_train = int(0.8 * len(X))
@@ -438,7 +436,7 @@ class RegressionML(Trainer):
             print('Choose the model correctly')
         return init_model
 
-    def train_model(self, init_model):
+    def trainModel(self, init_model, modelFilePath, num_epochs):
         """
         Train model and return best model
 
@@ -459,11 +457,12 @@ class RegressionML(Trainer):
         criterion = nn.MSELoss()
         optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
 
-        best_model = self.train(init_model, dataloaders_dict, criterion, self.train_parameter['num_epochs'], optimizer)
-        return best_model
+        self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.parameter['device'])
+        self.save_model(self.best_model, modelFilePath)
+        return self.best_model
     
 
-    def train(self, model, dataloaders, criterion, num_epochs, optimizer):
+    def train(self, model, dataloaders, criterion, num_epochs, optimizer, device):
         import time
         import copy
         """
@@ -512,8 +511,8 @@ class RegressionML(Trainer):
 
                 # training과 validation 단계에 맞는 dataloader에 대하여 학습/검증 진행
                 for inputs, labels in dataloaders[phase]:
-                    inputs = inputs.to(self.parameter['device'])
-                    labels = labels.to(self.parameter['device'], dtype=torch.float)
+                    inputs = inputs.to(device)
+                    labels = labels.to(device, dtype=torch.float)
                     
                     # parameter gradients를 0으로 설정
                     optimizer.zero_grad()
@@ -569,7 +568,7 @@ class RegressionML(Trainer):
         """
 
         # save model
-        torch.save(best_model.state_dict(), best_model_path)
+        torch.save(best_model.state_dict(), best_model_path[0])
 
     
     
