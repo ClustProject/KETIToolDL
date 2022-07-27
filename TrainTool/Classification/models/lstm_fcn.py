@@ -2,8 +2,6 @@ import torch.nn as nn
 import torch
 import torch.nn.functional as F
 import torch.optim as optim
-from models.train_model import Train_Test
-
 
 class SELayer(nn.Module):
     def __init__(self, channel, reduction=16):
