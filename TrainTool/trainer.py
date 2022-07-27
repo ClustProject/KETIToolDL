@@ -54,6 +54,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
+# Model 1: Brits
 class BritsTrainer(Trainer):
     def _trainSaveModel(self, df): 
         Brits = BritsTraining(df, self.modelFilePath[0])
@@ -469,7 +470,7 @@ class RegressionML(Trainer):
         dataloaders_dict = {'train': self.train_loader, 'val': self.valid_loader}
         criterion = nn.MSELoss()
         optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
-
+        
         self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.parameter['device'])
         self._trainSaveModel(self.best_model, modelFilePath)
         return self.best_model
