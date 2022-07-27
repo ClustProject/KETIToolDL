@@ -12,7 +12,10 @@ def getSavedIntegratedData(dataSaveMode, dataName):
     elif dataSaveMode =='influx':
         #2-2 JH TODO influx에서 DataName으로 데이터를 읽을 수 있도록 함
         #dataName을 _로 나누면 DB 이름과 MS이름으로 나뉘어짐
-        pass
+        db_name = 'ml_data_integration'
+        ms_name = dataName
+        data = setting.db_client.get_data(db_name, ms_name)
+        
     return data
 
 if __name__ == "__main__":
