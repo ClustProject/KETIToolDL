@@ -1,10 +1,10 @@
 import pandas as pd
 import setting
-import os
+import os, sys
+sys.path.append("../")
 
 # 
-import p1_integratedDataSaving as p1
-import p2_dataSelection as p2
+from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 
 def getScaledData(scalerParam, scalerRootpath, data):
     if scalerParam=='scale':
@@ -104,65 +104,3 @@ def setModelData(dataName, modelMeta, trainDataInfo, modelTags, cleanTrainDataPa
 
     modelMeta[ModelName]=modelInfoMeta
     return ModelName, modelInfoMeta
-
-
-if __name__ == "__main__":
-
-    # 1 (p2부분 1. Data Selection)
-    DataMeta = p1.readJsonData(setting.DataMetaPath)
-    dataList =  list(DataMeta.keys())
-    dataName = dataList[4]
-    dataSaveMode = DataMeta[dataName]["integrationInfo"]["DataSaveMode"]
-    data = p2.getSavedIntegratedData(dataSaveMode, dataName)
-    integration_freq_sec = DataMeta[dataName]["integrationInfo"]["integration_freq_sec"]
-
-    # 2 Training Data Preparation
-    # 2-1
-    featureList= ['CO2ppm','H2Sppm', 'Humidity', 'Temperature', 'out_sunshine', 'sin_hour']# 'sin_hour' 할 수 있도록 DB/MS 조절해야함
-    target_col = 'H2Sppm'
-
-    # 2-2
-    cleanTrainDataParam = 'Clean'
-
-    # 2-2-1 cleanTrainDataParam == Clean 일 경우
-    NaNProcessingParam ={
-        "feature_cycle":'Day',
-        "feature_cycle_times":1,
-        "NanInfoForCleanData":{'type':'num', 'ConsecutiveNanLimit':3, 'totalNaNLimit':30000}
-    }
-    # 2-3
-    scalerParam='scale'
-
-    # 2-4
-    splitRatio = 0.8
-
-    # 2-5
-    train, val, scalerFilePath = getTrainValData(data, featureList, cleanTrainDataParam, splitRatio, scalerParam, dataName, integration_freq_sec,  NaNProcessingParam)    # 3 Training and Saving
-    # 3-1.
-    model_method ="gru"
-
-    batch_size = 64
-    n_epochs= 100
-
-    trainParameter = {'input_dim': len(featureList),
-                    'hidden_dim' : 256,
-                    'layer_dim' : 3,
-                    'output_dim' : 1,
-                    'dropout_prob' : 0.2}
-
-    transformParameter ={
-        "future_step": 2,# 0~x
-        "past_step":12,# 1~y
-        "feature_col": featureList,
-        "target_col":target_col 
-    }   
-    modelTags =["farm", "swine", "prediction"]
-    trainDataType = "timeseries"
-    modelPurpose = "forecasting"
-
-    # 3-2
-    trainDataInfo = DataMeta[dataName]['integrationInfo']
-    
-    # 3-3
-    ModelName, modelFilePath, modelInfoMeta = trainSaveModel(train, val,  dataName, cleanTrainDataParam, NaNProcessingParam, transformParameter, scalerParam,  model_method,  trainParameter, batch_size, n_epochs, trainDataInfo, modelTags, trainDataType, modelPurpose, scalerFilePath)
-    print(modelInfoMeta)

@@ -4,8 +4,6 @@ import json
 sys.path.append("../../")
 sys.path.append("../../..")
 
-import setting
-
 ## 1. IntegratedDataSaving
 #JH TODO 아래 코드에 대한 주석 작성
 #JH TODO Influx Save Load 부분 작성 보완해야함
@@ -74,21 +72,6 @@ def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, 
     
     return data
 
-def saveData(data, dataDescriptionInfo, timeIntervalInfo, savemode='CSV'):
-    if savemode =='influx':
-        #TODO JH : InfluxSave
-        db_name = 'ml_data_integration'
-        ms_name = dataDescriptionInfo+'_'+timeIntervalInfo
-        setting.db_client.write_db(db_name, ms_name, data)
-        setting.db_client.close_db()
-    elif savemode == 'CSV' :
-        # mode is CSV or others
-        #File Save
-        fileName = setting.csvDataFileRootDir+(dataDescriptionInfo+'_'+timeIntervalInfo)+'.csv'
-        data.to_csv(fileName)
-    # else:
-    #     # CSV, Influx 모두 저장?
-    #     pass
 
 def getListMerge(infoList):
     MergedName=''
@@ -129,9 +112,23 @@ def readJsonData(jsonFilePath):
             jsonData = json.load(json_file)
     return jsonData
 
+def saveData(data, DataSaveMode, dataName, dataRoot, db_client=None):
+    print(DataSaveMode)
+    if DataSaveMode =='influx':
+        db_name = dataRoot
+        ms_name = dataName
+        db_client.write_db(db_name, ms_name, data)
+        db_client.close_db()
 
-def setMetaData(DataMeta, dataDescriptionInfo, timeIntervalInfo, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode):
-    dataName = dataDescriptionInfo +'_'+ timeIntervalInfo 
+    elif DataSaveMode == 'CSV' :
+        current = os.getcwd()
+        print(current)
+        fileName = os.path.join(current, dataRoot, dataName +'.csv')
+        data.to_csv(fileName)
+
+def saveMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode):
+
+    DataMeta = readJsonData(DataMetaPath)
 
     DataInfo ={}
     DataInfo ["startTime"] = startTime
@@ -143,53 +140,5 @@ def setMetaData(DataMeta, dataDescriptionInfo, timeIntervalInfo, processParam, d
     DataInfo ["DataSaveMode"] = DataSaveMode
     DataMeta[dataName]={}
     DataMeta[dataName]["integrationInfo"] = DataInfo
-    
-    return DataMeta
+    writeJsonData(DataMetaPath, DataMeta)
 
-def saveDataMeta(data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime):
-    from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
-
-    dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
-    timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
-    saveData(data, dataDescriptionInfo, timeIntervalInfo, DataSaveMode)
-
-    # 2-4-3
-    DataMeta = readJsonData(setting.DataMetaPath)
-    updateMeta = setMetaData(DataMeta, dataDescriptionInfo, timeIntervalInfo, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode)
-    writeJsonData(setting.DataMetaPath, updateMeta)
-
-if __name__ == "__main__":
-    
-    #1-1
-    dataInfo = [['farm_swine_air', 'HS1'], ['weather_outdoor_keti_clean', 'sangju'], ['life_additional_Info', 'trigonometicInfoByHours']]
-
-    #1-2
-    integration_freq_sec = 60 * 60 # 60분
-
-    # 1-3 
-    DataSaveMode='CSV' #or influx
-
-    # 2 
-    # 2-1 (Train)
-    trainStartTime = "2020-11-25 00:00:00"
-    trainEndTime ="2021-02-28 00:00:00"
-    testStartTime ="2021-03-01 00:00:00"
-    testEndTime ="2021-03-31 00:00:00"
-
-    #startTime = trainStartTime
-    #endTime = trainEndTime
-
-    startTime = testStartTime
-    endTime = testEndTime
-
-    # 2-2
-    #cleanParam ="Clean"
-    cleanParam = "NoClean"
-
-    # 2-3
-    processParam = getProcessParam(cleanParam) 
-
-    # 2-4
-    data = getData(setting.db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime)
-    # 2-5
-    saveDataMeta(data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime)
