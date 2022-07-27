@@ -77,16 +77,18 @@ def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, 
 def saveData(data, dataDescriptionInfo, timeIntervalInfo, savemode='CSV'):
     if savemode =='influx':
         #TODO JH : InfluxSave
-        #
-        pass
+        db_name = 'ml_data_integration'
+        ms_name = dataDescriptionInfo+'_'+timeIntervalInfo
+        setting.db_client.write_db(db_name, ms_name, data)
+        setting.db_client.close_db()
     elif savemode == 'CSV' :
         # mode is CSV or others
         #File Save
         fileName = setting.csvDataFileRootDir+(dataDescriptionInfo+'_'+timeIntervalInfo)+'.csv'
         data.to_csv(fileName)
-    else:
-        # CSV, Influx 모두 저장?
-        pass
+    # else:
+    #     # CSV, Influx 모두 저장?
+    #     pass
 
 def getListMerge(infoList):
     MergedName=''
