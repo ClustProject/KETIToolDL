@@ -29,16 +29,15 @@ class RNN_model(nn.Module):
     def forward(self, x):
         # data dimension: (batch_size x input_size x seq_len) -> (batch_size x seq_len x input_size)로 변환
         x = torch.transpose(x, 1, 2)
-        
         # initial hidden states 설정
-        h0 = torch.zeros(self.num_directions * self.num_layers, x.size(0), self.hidden_size).to(self.device)
+        h0 = torch.zeros(self.num_directions * self.num_layers, x.size(0), self.hidden_size, device=x.device).to(self.device)
         
         # 선택한 rnn_type의 RNN으로부터 output 도출
         if self.rnn_type == 'gru':
             out, _ = self.rnn(x, h0)  # out: tensor of shape (batch_size, seq_length, hidden_size)
         else:
             # initial cell states 설정
-            c0 = torch.zeros(self.num_directions * self.num_layers, x.size(0), self.hidden_size).to(self.device)
+            c0 = torch.zeros(self.num_directions * self.num_layers, x.size(0), self.hidden_size, device=x.device).to(self.device)
             out, _ = self.rnn(x, (h0, c0))  # out: tensor of shape (batch_size, seq_length, hidden_size)
         
         out = self.fc(out[:, -1, :])
