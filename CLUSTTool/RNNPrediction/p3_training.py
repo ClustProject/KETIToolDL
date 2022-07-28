@@ -1,5 +1,4 @@
 import pandas as pd
-import setting
 import os, sys
 sys.path.append("../")
 
@@ -23,24 +22,14 @@ def getScaledData(scalerParam, scalerRootpath, data):
     return resultData, scalerFilePath
 
 
-def getTrainValData(data, featureList, cleanTrainDataParam, splitRatio, scalerParam, dataName, integration_freq_sec, NaNProcessingParam):
-    scalerRootpath = os.path.join(setting.scalerRootDir, dataName, cleanTrainDataParam)
-    trainval, scalerFilePath = getScaledData(scalerParam, scalerRootpath, data[featureList])
+def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam):
+    trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList])
     from KETIPreDataTransformation.trans_for_purpose import machineLearning as ML
     train, val = ML.splitDataByRatio(trainval, splitRatio)
-    if cleanTrainDataParam =='Clean':
-        import datetime
-        timedelta_frequency_sec = datetime.timedelta(seconds= integration_freq_sec)
-        
-        train = cleanNaNDF(train, NaNProcessingParam, timedelta_frequency_sec)
-        val = cleanNaNDF(val, NaNProcessingParam, timedelta_frequency_sec)
-
-    else:
-        pass
     
     return train, val, scalerFilePath
 
-def cleanNaNDF(dataSet, NaNProcessingParam, integrationFreq_min):
+def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     feature_cycle=NaNProcessingParam['feature_cycle']
     feature_cycle_times=NaNProcessingParam['feature_cycle_times']
     NanInfoForCleanData=NaNProcessingParam['NanInfoForCleanData']
@@ -48,16 +37,16 @@ def cleanNaNDF(dataSet, NaNProcessingParam, integrationFreq_min):
     feature_list = dataSet.columns
     from KETIPreDataIngestion.dataByCondition import cycle_Module
 
-    dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, integrationFreq_min)
+    dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
     import matplotlib.pyplot as plt
 
     from KETIPreDataSelection.dataRemovebyNaN import clean_feature_data
-    CMS = clean_feature_data.CleanFeatureData(feature_list, integrationFreq_min)
+    CMS = clean_feature_data.CleanFeatureData(feature_list, timedelta_frequency_sec)
     refinedData, filterImputedData = CMS.getMultipleCleanDataSetsByDF(dayCycle, NanInfoForCleanData)
     CleanData = pd.concat(filterImputedData.values())
     return CleanData
 
-def trainSaveModel(train, val,  dataName, cleanTrainDataParam, NaNProcessingParam, transformParameter, scalerParam,  model_method,  trainParameter, batch_size, n_epochs, trainDataInfo, modelTags, trainDataType, modelPurpose, scalerFilePath):
+def trainSaveModel(trainModelMetaPath, train, val,  dataName, cleanTrainDataParam, NaNProcessingParam, transformParameter, scalerParam,  model_method,  trainParameter, batch_size, n_epochs, trainDataInfo, modelTags, trainDataType, modelPurpose, scalerFilePath):
 
     from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
     transformParameter_encode =  encodeHashStyle(str(transformParameter))
@@ -75,9 +64,9 @@ def trainSaveModel(train, val,  dataName, cleanTrainDataParam, NaNProcessingPara
     RM.getModel(model_method)
     RM.trainModel(n_epochs, modelFilePath)
 
-    modelMeta = p1.readJsonData(setting.trainModelMetaPath)
+    modelMeta = p1.readJsonData(trainModelMetaPath)
     modelName, modelInfoMeta = setModelData(dataName, modelMeta, trainDataInfo, modelTags, cleanTrainDataParam, NaNProcessingParam, transformParameter, scalerParam, trainParameter, transformParameter_encode, model_method, trainDataType, modelPurpose, scalerFilePath, modelFilePath)
-    p1.writeJsonData(setting.trainModelMetaPath, modelMeta)
+    p1.writeJsonData(trainModelMetaPath, modelMeta)
 
     return modelName, modelFilePath, modelInfoMeta
 
