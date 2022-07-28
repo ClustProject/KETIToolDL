@@ -24,8 +24,11 @@ class RegressionModelTestInference(Inference):
         self.X = X
         self.y = y 
         self.batch_size = batch_size
-        self.test_loader = self.get_testLoader()
         self.device = device
+
+    def transInputDFtoNP(self):
+        from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+        self.X, self.y = transDFtoNP(self.X, self.y)
 
     def get_testLoader(self):
         """
@@ -34,7 +37,6 @@ class RegressionModelTestInference(Inference):
         :return: test_loader
         :rtype: DataLoader
         """
-        
         x_data = np.array(self.X)
         y_data = self.y
         testData= torch.utils.data.TensorDataset(torch.Tensor(x_data), torch.Tensor(y_data))
@@ -61,7 +63,7 @@ class RegressionModelTestInference(Inference):
         """
 
         print("\nStart testing data\n")
-
+        self.test_loader = self.get_testLoader()
         # load best model
         init_model.load_state_dict(torch.load(best_model_path[0]))
 

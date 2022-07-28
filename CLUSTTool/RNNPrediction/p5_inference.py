@@ -2,7 +2,7 @@ import pandas as pd
 import sys
 sys.path.append("../")
 
-from KETIToolDL.CLUSTTool.RNNPrediction import p4_testing as p4
+from KETIToolDL.CLUSTTool.common import p4_testing as p4
 
 def inference(input, trainParameter, model_method, modelFilePath, scalerParam, scalerFilePath, featureList, target_col):
     scaleMethod='minmax'
@@ -23,7 +23,7 @@ def inference(input, trainParameter, model_method, modelFilePath, scalerParam, s
     if scalerParam =='scale':
         baseDFforInverse = pd.DataFrame(columns=featureList, index=range(1))
         baseDFforInverse[target_col] = inference_result[0]
-        prediction_inverse = pd.DataFrame(scaler.transform(baseDFforInverse), columns=featureList, index=baseDFforInverse.index)
+        prediction_inverse = pd.DataFrame(scaler.inverse_transform(baseDFforInverse), columns=featureList, index=baseDFforInverse.index)
         result = prediction_inverse[target_col].values[0]
     else:
         result = inference_result[0][0]

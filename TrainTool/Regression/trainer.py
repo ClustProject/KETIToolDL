@@ -32,7 +32,7 @@ class RegressionML(Trainer):
         self.parameter = parameter
 
 
-    def processInputData(self, train_X, train_y, batch_size):
+    def processInputData(self, train_x, train_y, val_x, val_y, batch_size):
         """
         Prepare and set Input Data
         :param trainX: train_X data
@@ -48,18 +48,19 @@ class RegressionML(Trainer):
         
         # load dataloder
         
-        X= train_X
-        y = train_y
-        
-        # train data를 시간순으로 8:2의 비율로 train/validation set으로 분할
-        n_train = int(0.8 * len(X))
-        x_train, y_train = X[:n_train], y[:n_train]
-        x_valid, y_valid = X[n_train:], y[n_train:]
+        from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+        train_x, train_y = transDFtoNP(train_x, train_y)
+        val_x, val_y = transDFtoNP(val_x, val_y)
+
+        self.parameter['input_size'] = train_x.shape[1]
+        self.parameter['seq_len']  = train_x.shape[2] # seq_length
+
+
 
         ## TODO 아래 코드 군더더기 저럴 필요 없음 어짜피 이 함수는 Train을 넣으면 Train, Valid 나누는 함수로 고정시키 때문에
         # train/validation 데이터셋 구축
         datasets = []
-        for dataset in [(x_train, y_train), (x_valid, y_valid)]:
+        for dataset in [(train_x, train_y), (val_x, val_y)]:
             x_data = np.array(dataset[0])
             y_data = dataset[1]
             datasets.append(torch.utils.data.TensorDataset(torch.Tensor(x_data), torch.Tensor(y_data)))
@@ -86,7 +87,6 @@ class RegressionML(Trainer):
         :return: initialized model
         :rtype: model
         """
-
         # build initialized model
         if self.model_name == 'LSTM_rg':
             init_model = RNN_model(

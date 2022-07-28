@@ -1,6 +1,7 @@
 import os, sys
 sys.path.append("../")
 
+from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 import pandas as pd
 def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam):
     trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList])
@@ -41,3 +42,16 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     refinedData, filterImputedData = CMS.getMultipleCleanDataSetsByDF(dayCycle, NanInfoForCleanData)
     CleanData = pd.concat(filterImputedData.values())
     return CleanData
+
+def getModelFilePath(trainDataPathList, model_method):
+
+    from KETIToolDL import modelInfo
+    MI = modelInfo.ModelFileManager()
+    modelFilePath = MI.getModelFilePath(trainDataPathList, model_method)
+    return modelFilePath
+    
+def updateModelMetaData(ModelName, modelInfoMeta, trainModelMetaFilePath):
+    modelMeta = p1.readJsonData(trainModelMetaFilePath)
+    modelMeta[ModelName]=modelInfoMeta
+    p1.writeJsonData(trainModelMetaFilePath, modelMeta)
+    return modelInfoMeta
