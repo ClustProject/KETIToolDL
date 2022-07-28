@@ -1,8 +1,9 @@
 
-import setting
-import p1_integratedDataSaving as p1
-import p2_dataSelection as p2
-import p3_training as p3
+import sys
+sys.path.append("../")
+
+from KETIToolDL.CLUSTTool.common import p2_dataSelection as p2
+from KETIToolDL.CLUSTTool.RNNPrediction import p3_training as p3
 
 import pandas as pd 
 def getScalerFromFile(scalerFilePath):
@@ -54,10 +55,10 @@ def getPredictionDFResult(predictions, values, scalerParam, scaler, featureList,
         df_result = pd.DataFrame(data={"value": values, "prediction": predictions}, index=range(len(predictions)))
     return df_result
 
-def getTestResult(dataName, modelName, DataMeta, ModelMeta):
+def getTestResult(dataName, modelName, DataMeta, ModelMeta, dataRoot, db_client):
 
     dataSaveMode = DataMeta[dataName]["integrationInfo"]["DataSaveMode"]
-    data = p2.getSavedIntegratedData(dataSaveMode, dataName)
+    data = p2.getSavedIntegratedData(dataSaveMode, dataName, dataRoot, db_client)
     scalerFilePath = ModelMeta[modelName]["scalerFilePath"]
     featureList = ModelMeta[modelName]["featureList"]
     cleanTrainDataParam = ModelMeta[modelName]["cleanTrainDataParam"]
@@ -82,19 +83,3 @@ def getTestResult(dataName, modelName, DataMeta, ModelMeta):
     result_metrics =  metrics.calculate_metrics_df(df_result)
 
     return df_result, result_metrics
-
-
-if __name__ == "__main__":
-    # 1
-    DataMeta = p1.readJsonData(setting.DataMetaPath)
-    dataList =  list(DataMeta.keys())
-    dataName = dataList[6]
-    
-    #2
-    ModelMeta =p1.readJsonData(setting.trainModelMetaPath)
-    modelList = list(ModelMeta.keys())
-    modelName = modelList[1]
-
-    #3
-    df_result, result_metrics =getTestResult(dataName, modelName, DataMeta, ModelMeta)
-    
