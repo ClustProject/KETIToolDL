@@ -228,7 +228,6 @@ class ClassificationML(Trainer):
         
         # train model
         init_model = init_model.to(self.device)
-
         dataloaders_dict = {'train': self.train_loader, 'val': self.valid_loader}
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
