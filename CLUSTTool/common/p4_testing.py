@@ -36,7 +36,14 @@ def getPredictionDFResult(predictions, values, scalerParam, scaler, featureList,
         prediction_inverse = pd.DataFrame(scaler.inverse_transform(baseDFforInverse), columns=featureList, index=baseDFforInverse.index)
         baseDFforInverse[target_col] = values 
         values_inverse = pd.DataFrame(scaler.inverse_transform(baseDFforInverse), columns=featureList, index=baseDFforInverse.index)
-        df_result = pd.DataFrame(data={"value": values_inverse[target_col], "prediction": prediction_inverse[target_col]}, index=baseDFforInverse.index)
+        trues = values_inverse[target_col]
+        preds = prediction_inverse[target_col]
+        df_result = pd.DataFrame(data={"value": trues, "prediction": preds}, index=baseDFforInverse.index)
+        from sklearn.metrics import mean_absolute_error, mean_squared_error 
+        mse = mean_squared_error(trues, preds)
+        mae = mean_absolute_error(trues, preds)
+        print(f'** Performance of test dataset (After Inverse Scaling)==> MSE = {mse}, MAE = {mae}')
+        print
     else:
         df_result = pd.DataFrame(data={"value": values, "prediction": predictions}, index=range(len(predictions)))
     return df_result
