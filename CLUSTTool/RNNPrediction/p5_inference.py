@@ -5,11 +5,9 @@ sys.path.append("../")
 from KETIToolDL.CLUSTTool.common import p4_testing as p4
 
 def inference(input, trainParameter, model_method, modelFilePath, scalerParam, scalerFilePath, featureList, target_col):
-    scaleMethod='minmax'
     inputDF = pd.DataFrame(input, columns = featureList)
     # 4.Inference Data Preparation
-    scaler = p4.getScalerFromFile(scalerFilePath)
-    inputData= p4.getScaledData(inputDF, scaler, scalerParam)
+    inputData, scaler = p4.getScaledTestData(inputDF[featureList], scalerFilePath, scalerParam)
 
     # 5. Inference
     from KETIToolDL.PredictionTool.RNNStyleModel.inference import RNNStyleModelInfernce

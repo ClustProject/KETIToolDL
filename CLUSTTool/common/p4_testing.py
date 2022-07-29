@@ -5,13 +5,21 @@ sys.path.append("../")
 from KETIToolDL.CLUSTTool.common import p3_training as p3
 
 import pandas as pd 
+
+def getScaledTestData(data, scalerFilePath, scalerParam):
+    scaler =None
+    result = data
+    if scalerParam =='scale':
+        scaler = getScalerFromFile(scalerFilePath)
+        result = getScaledData(data, scaler, scalerParam)
+    return result, scaler
+
 def getScalerFromFile(scalerFilePath):
     import joblib
     scaler = joblib.load(scalerFilePath)
     return scaler
 
 def getScaledData(data, scaler, scalerParam):
-    scaleMethod='minmax'
     if scalerParam=='scale':
         scaledD = pd.DataFrame(scaler.transform(data), index = data.index, columns = data.columns)
     else:

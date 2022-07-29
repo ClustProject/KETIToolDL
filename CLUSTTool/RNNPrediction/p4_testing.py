@@ -31,11 +31,7 @@ def getTestResult(dataName, modelName, DataMeta, ModelMeta, dataRoot, db_client)
     modelFilePath = ModelMeta[modelName]["modelFilePath"]
     target_col = ModelMeta[modelName]["transformParameter"]["target_col"]
 
-    scaler = p4.getScalerFromFile(scalerFilePath)
-    test = data[featureList]
-    
-    test = p4.getScaledData(test, scaler, scalerParam)
-    print(cleanTrainDataParam, integration_freq_sec, NaNProcessingParam)
+    test, scaler = p4.getScaledTestData(data[featureList], scalerFilePath, scalerParam)
     test = p4.getCleandData(test, cleanTrainDataParam, integration_freq_sec, NaNProcessingParam)
     
     prediction, values = getTestValues(test, trainParameter, transformParameter, model_method, modelFilePath)
