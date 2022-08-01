@@ -3,6 +3,18 @@ sys.path.append("../")
 
 from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 import pandas as pd
+
+def deleteLowQualityTrainValidationData(cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
+    if cleanTrainDataParam =='Clean':
+        import datetime
+        timedelta_frequency_sec = datetime.timedelta(seconds= integration_freq_sec)
+        train = cleanNaNDF(train, NaNProcessingParam, timedelta_frequency_sec)
+        val = cleanNaNDF(val, NaNProcessingParam, timedelta_frequency_sec)
+
+    else:
+        pass
+    return train, val
+
 def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam):
     trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList])
     from KETIPreDataTransformation.trans_for_purpose import machineLearning as ML

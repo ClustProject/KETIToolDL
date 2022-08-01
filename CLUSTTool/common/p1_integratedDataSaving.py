@@ -9,6 +9,17 @@ sys.path.append("../../..")
 #JH TODO Influx Save Load 부분 작성 보완해야함
 
 
+def saveAndUpdateDataAndMeta(dataRoot, DataMetaPath, data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime, db_client=None):
+    from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
+    dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
+    timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
+    dataName = dataDescriptionInfo+'_'+timeIntervalInfo
+    
+    saveData(data, DataSaveMode, dataName, dataRoot, db_client)
+
+    # Save Meta
+    saveMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode)
+
 def getProcessParam(cleanParam):
     if cleanParam =="Clean":
         refine_param = {
@@ -54,16 +65,18 @@ def getProcessParam(cleanParam):
     process_param = {'refine_param':refine_param, 'outlier_param':outlier_param, 'imputation_param':imputation_param}
     return process_param
 
+def getIntegrationParam(integration_freq_sec):
+    integration_param = {
+        "granularity_sec":integration_freq_sec,
+        "param":{},
+        "method":"meta"
+    }
+    return integration_param
+
 def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime):
     from KETIPreDataSelection.data_selection.setSelectionParameter import makeIntDataInfoSet
     intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
-    def getIntegrationParam(integration_freq_sec):
-        integration_param = {
-            "granularity_sec":integration_freq_sec,
-            "param":{},
-            "method":"meta"
-        }
-        return integration_param
+
 
     integrationParam = getIntegrationParam(integration_freq_sec)
     
