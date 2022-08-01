@@ -9,14 +9,15 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataRo
     dataSaveMode_y = DataMeta[dataName_y]["integrationInfo"]["DataSaveMode"]
     dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataRoot)
     datay = p2.getSavedIntegratedData(dataSaveMode_y, dataName_y, dataRoot)
-    X_scalerFilePath = ModelMeta[modelName]["X_scalerFilePath"]
-    y_scalerFilePath = ModelMeta[modelName]["y_scalerFilePath"]
+    X_scalerFilePath = ModelMeta[modelName]['files']['XScalerFile']["filePath"]
+    y_scalerFilePath = ModelMeta[modelName]['files']['yScalerFile']["filePath"]
+    modelFilePath = ModelMeta[modelName]['files']['modelFile']["filePath"]
     featureList = ModelMeta[modelName]["featureList"]
     target = ModelMeta[modelName]["target"]
     scalerParam = ModelMeta[modelName]["scalerParam"]
     model_method = ModelMeta[modelName]["model_method"]
     trainParameter = ModelMeta[modelName]["trainParameter"]
-    modelFilePath = ModelMeta[modelName]["modelFilePath"]
+    
 
     # Scaling Test Input
     test_x, scaler_X = p4.getScaledTestData(dataX[featureList], X_scalerFilePath, scalerParam)

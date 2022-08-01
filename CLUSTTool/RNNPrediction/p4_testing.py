@@ -19,6 +19,9 @@ def getTestResult(dataName, modelName, DataMeta, ModelMeta, dataRoot, db_client)
 
     dataSaveMode = DataMeta[dataName]["integrationInfo"]["DataSaveMode"]
     data = p2.getSavedIntegratedData(dataSaveMode, dataName, dataRoot, db_client)
+    scalerFilePath = ModelMeta[modelName]['files']['scalerFile']["filePath"]
+    modelFilePath = ModelMeta[modelName]['files']['modelFile']["filePath"]
+
     scalerFilePath = ModelMeta[modelName]["scalerFilePath"]
     featureList = ModelMeta[modelName]["featureList"]
     cleanTrainDataParam = ModelMeta[modelName]["cleanTrainDataParam"]
@@ -28,7 +31,6 @@ def getTestResult(dataName, modelName, DataMeta, ModelMeta, dataRoot, db_client)
     trainParameter = ModelMeta[modelName]["trainParameter"]
     transformParameter = ModelMeta[modelName]["transformParameter"]
     model_method = ModelMeta[modelName]["model_method"]
-    modelFilePath = ModelMeta[modelName]["modelFilePath"]
     target_col = ModelMeta[modelName]["transformParameter"]["target_col"]
 
     test, scaler = p4.getScaledTestData(data[featureList], scalerFilePath, scalerParam)
