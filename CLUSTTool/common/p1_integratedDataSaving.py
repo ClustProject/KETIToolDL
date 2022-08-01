@@ -136,7 +136,16 @@ def saveData(data, DataSaveMode, dataName, dataRoot, db_client=None):
     elif DataSaveMode == 'CSV' :
         current = os.getcwd()
         print(current)
+
+        if not os.path.isdir(current + "/" + dataRoot) :
+            os.mkdir(current + "/" + dataRoot)
+        """
+        else :
+            for file in os.scandir(current + "/" + dataRoot) :
+                os.remove(file.path)
+        """
         fileName = os.path.join(current, dataRoot, dataName +'.csv')
+
         data.to_csv(fileName)
 
 def saveMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode):
