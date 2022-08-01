@@ -9,6 +9,7 @@
 
 #myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','JHTest', 'Models']
 myModelRootPath = ['/home','keti', 'CLUST_KETI', 'Clust', 'KETIAppTestCode','MLModelTest','Models']
+myModelRootPath =['./Models']
 #myModelRootPath = ['/home', 'hwangjisoo', '바탕화면', 'Clust', 'KETIAppTestCode','JSTest', 'ClassificationTest','KUDataClassification-main','Models']
 #myModelRootPath = ["c:","Users", "bunny", "Code_CLUST", "KETIToolDL","DL", "Models"]
 myModelInfoList = {
