@@ -17,8 +17,9 @@ def saveAndUpdateDataAndMeta(dataRoot, DataMetaPath, data, processParam, dataInf
     
     saveData(data, DataSaveMode, dataName, dataRoot, db_client)
 
-    # Save Meta
-    saveMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode)
+    # Save Json Meta
+    saveJsonMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode)
+    # Save Mongo Meta
 
 def getProcessParam(cleanParam):
     if cleanParam =="Clean":
@@ -148,7 +149,7 @@ def saveData(data, DataSaveMode, dataName, dataRoot, db_client=None):
 
         data.to_csv(fileName)
 
-def saveMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode):
+def saveJsonMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode):
 
     DataMeta = readJsonData(DataMetaPath)
 

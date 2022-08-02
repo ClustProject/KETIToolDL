@@ -32,7 +32,7 @@ class RegressionML(Trainer):
         self.parameter = parameter
 
 
-    def processInputData(self, train_x, train_y, val_x, val_y, batch_size):
+    def processInputData(self, train_x, train_y, val_x, val_y, batch_size, windowNum = 0):
         """
         Prepare and set Input Data
         :param trainX: train_X data
@@ -49,8 +49,8 @@ class RegressionML(Trainer):
         # load dataloder
         
         from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
-        train_x, train_y = transDFtoNP(train_x, train_y)
-        val_x, val_y = transDFtoNP(val_x, val_y)
+        train_x, train_y = transDFtoNP(train_x, train_y, windowNum)
+        val_x, val_y = transDFtoNP(val_x, val_y, windowNum)
 
         self.parameter['input_size'] = train_x.shape[1]
         self.parameter['seq_len']  = train_x.shape[2] # seq_length

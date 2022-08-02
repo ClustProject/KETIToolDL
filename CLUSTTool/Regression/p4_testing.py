@@ -4,7 +4,7 @@ sys.path.append("../")
 from KETIToolDL.CLUSTTool.common import p4_testing as p4
 from KETIToolDL.CLUSTTool.common import p2_dataSelection as p2
 
-def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataRoot, device, db_client=None):
+def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataRoot, device, windowNum=0, db_client=None):
     dataSaveMode_X = DataMeta[dataName_X]["integrationInfo"]["DataSaveMode"]
     dataSaveMode_y = DataMeta[dataName_y]["integrationInfo"]["DataSaveMode"]
     dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataRoot)
@@ -24,10 +24,10 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataRo
     test_y, scaler_y = p4.getScaledTestData(datay[target], y_scalerFilePath, scalerParam)
     # 4. Testing
     batch_size=1
-    df_result, result_metrics = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device)
+    df_result, result_metrics = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum)
     return df_result, result_metrics
 
-def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device):
+def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum=0):
     from KETIToolDL.TrainTool.Regression.trainer import RegressionML as RML
 
     rml = RML(model_method, trainParameter)
@@ -35,7 +35,7 @@ def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scaler
 
     from KETIToolDL.PredictionTool.Regression.inference import RegressionModelTestInference as RTI
     ri = RTI(test_x, test_y, batch_size, device)
-    ri.transInputDFtoNP()
+    ri.transInputDFtoNP(windowNum)
     pred, trues, mse, mae = ri.get_result(model, modelFilePath)
     df_result = p4.getPredictionDFResult(pred, trues, scalerParam, scaler_y, featureList= target, target_col = target[0])
     from KETIToolDataExploration.stats_table import metrics

@@ -26,9 +26,9 @@ class RegressionModelTestInference(Inference):
         self.batch_size = batch_size
         self.device = device
 
-    def transInputDFtoNP(self):
+    def transInputDFtoNP(self, windowNum= 0):
         from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
-        self.X, self.y = transDFtoNP(self.X, self.y)
+        self.X, self.y = transDFtoNP(self.X, self.y, windowNum)
 
     def get_testLoader(self):
         """
