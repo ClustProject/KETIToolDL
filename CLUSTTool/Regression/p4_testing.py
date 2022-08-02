@@ -4,11 +4,11 @@ sys.path.append("../")
 from KETIToolDL.CLUSTTool.common import p4_testing as p4
 from KETIToolDL.CLUSTTool.common import p2_dataSelection as p2
 
-def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataRoot, device, windowNum=0, db_client=None):
+def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFolderPath, device, windowNum=0, db_client=None):
     dataSaveMode_X = DataMeta[dataName_X]["integrationInfo"]["DataSaveMode"]
     dataSaveMode_y = DataMeta[dataName_y]["integrationInfo"]["DataSaveMode"]
-    dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataRoot)
-    datay = p2.getSavedIntegratedData(dataSaveMode_y, dataName_y, dataRoot)
+    dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataFolderPath)
+    datay = p2.getSavedIntegratedData(dataSaveMode_y, dataName_y, dataFolderPath)
     X_scalerFilePath = ModelMeta[modelName]['files']['XScalerFile']["filePath"]
     y_scalerFilePath = ModelMeta[modelName]['files']['yScalerFile']["filePath"]
     modelFilePath = ModelMeta[modelName]['files']['modelFile']["filePath"]
