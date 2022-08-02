@@ -4,7 +4,7 @@ sys.path.append("../")
 from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 import pandas as pd
 
-def deleteLowQualityTrainValidationData(cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
+def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
     if cleanTrainDataParam =='Clean':
         import datetime
         timedelta_frequency_sec = datetime.timedelta(seconds= integration_freq_sec)

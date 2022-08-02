@@ -9,17 +9,33 @@ sys.path.append("../../..")
 #JH TODO Influx Save Load 부분 작성 보완해야함
 
 
-def saveAndUpdateDataAndMeta(dataRoot, DataMetaPath, data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime, db_client=None):
+def saveAndUpdateDataAndMeta(dataFolderPath, DataMetaPath, data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime, dbName="data_integrated_result", db_client=None):
     from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
     dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
     timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
     dataName = dataDescriptionInfo+'_'+timeIntervalInfo
     
-    saveData(data, DataSaveMode, dataName, dataRoot, db_client)
-
+    if DataSaveMode =='influx':
+        saveInfluxData(dbName, dataName, data, db_client)
+    elif DataSaveMode == 'CSV' :
+        saveCSVData(dataFolderPath, dataName, data)
+        
     # Save Json Meta
     saveJsonMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode)
     # Save Mongo Meta
+
+def saveCSVData(dataFolderPath, dataName, data):
+    if not os.path.exists(dataFolderPath):
+        os.makedirs(dataFolderPath)
+
+    fileName = os.path.join(dataFolderPath, dataName +'.csv')
+    data.to_csv(fileName)
+
+def saveInfluxData(dbName, dataName, data, db_client):
+    db_name = db_name
+    ms_name = dataName
+    db_client.write_db(db_name, ms_name, data)
+    db_client.close_db()
 
 def getProcessParam(cleanParam):
     if cleanParam =="Clean":
@@ -126,28 +142,6 @@ def readJsonData(jsonFilePath):
             jsonData = json.load(json_file)
     return jsonData
 
-def saveData(data, DataSaveMode, dataName, dataRoot, db_client=None):
-    print(DataSaveMode)
-    if DataSaveMode =='influx':
-        db_name = dataRoot
-        ms_name = dataName
-        db_client.write_db(db_name, ms_name, data)
-        db_client.close_db()
-
-    elif DataSaveMode == 'CSV' :
-        current = os.getcwd()
-        print(current)
-
-        if not os.path.isdir(current + "/" + dataRoot) :
-            os.mkdir(current + "/" + dataRoot)
-        """
-        else :
-            for file in os.scandir(current + "/" + dataRoot) :
-                os.remove(file.path)
-        """
-        fileName = os.path.join(current, dataRoot, dataName +'.csv')
-
-        data.to_csv(fileName)
 
 def saveJsonMeta(DataMetaPath, dataName, processParam, dataInfo, integration_freq_sec,startTime, endTime, cleanParam, DataSaveMode):
 
