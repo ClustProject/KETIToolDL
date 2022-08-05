@@ -14,8 +14,11 @@ class ClassificationModelTestInference(Inference):
         self.X = X
         self.y = y
         self.batch_size = batch_size
-        self.test_loader = self.get_testLoader()
         self.device = device
+        
+    def transInputDFtoNP(self, windowNum= 0):
+        from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+        self.X, self.y = transDFtoNP(self.X, self.y, windowNum)
         
     def get_testLoader(self):
         """
@@ -34,15 +37,16 @@ class ClassificationModelTestInference(Inference):
     def get_result(self, init_model, best_model_path):
         
         print("\nStart testing data\n")
-
+        self.test_loader = self.get_testLoader()
+        
         # load best model
         init_model.load_state_dict(torch.load(best_model_path[0]))
         
         # get prediction and accuracy
-        pred, probs, acc = self.test(init_model, self.test_loader)
+        preds, probs, trues, acc = self.test(init_model, self.test_loader)
         print(f'** Performance of test dataset ==> PROB = {probs}, ACC = {acc}')
-        print(f'** Dimension of result for test dataset = {pred.shape}')
-        return pred, probs, acc
+        print(f'** Dimension of result for test dataset = {preds.shape}')
+        return preds, probs, trues, acc
     
     def get_inferenceResult(self, init_model, best_model_path):
         
@@ -52,9 +56,9 @@ class ClassificationModelTestInference(Inference):
         init_model.load_state_dict(torch.load(best_model_path[0]))
         
         # get prediction and accuracy
-        pred, probs, acc = self.test(init_model, self.test_loader)
+        preds, probs, trues, acc = self.test(init_model, self.test_loader)
         
-        return pred
+        return preds
     
     def test(self, model, test_loader):
         """
@@ -77,6 +81,7 @@ class ClassificationModelTestInference(Inference):
             total = 0
             preds = []
             probs = []
+            trues = []
             for inputs, labels in test_loader:
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device, dtype=torch.long)
@@ -98,9 +103,12 @@ class ClassificationModelTestInference(Inference):
 
                 preds.extend(pred.detach().cpu().numpy()) 
                 probs.extend(prob.detach().cpu().numpy())
+                trues.extend(labels.detach().cpu().numpy())
 
             preds = np.array(preds)
             probs = np.array(probs)
+            trues = np.array(trues)
+            
             acc = (corrects.double() / total).item()
         
-        return preds, probs, acc
+        return preds, probs, trues, acc

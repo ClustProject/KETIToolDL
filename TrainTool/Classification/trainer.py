@@ -27,7 +27,7 @@ class ClassificationML(Trainer):
         self.model_name = model_name
         self.parameter = parameter
 
-    def processInputData(self, train_X, train_y, batch_size):
+    def processInputData(self, train_x, train_y, val_x, val_y, batch_size, windowNum = 0):
         """
         :param trainX: train x data
         :type trainX: Array
@@ -44,18 +44,17 @@ class ClassificationML(Trainer):
         :param trainParameter: 모델 학습 Parameter
         :type trainParameter: dictionary
         """
-        X = train_X
-        y = train_y
+        from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+        train_x, train_y = transDFtoNP(train_x, train_y, windowNum)
+        val_x, val_y = transDFtoNP(val_x, val_y, windowNum)
 
-        # train data를 시간순으로 8:2의 비율로 train/validation set으로 분할
-        n_train = int(0.8 * len(X))
-        x_train, y_train = X[:n_train], y[:n_train]
-        x_valid, y_valid = X[n_train:], y[n_train:]
-
+        self.parameter['input_size'] = train_x.shape[1]
+        self.parameter['seq_len']  = train_x.shape[2] # seq_length
+        
         ## TODO 아래 코드 군더더기 저럴 필요 없음 어짜피 이 함수는 Train을 넣으면 Train, Valid 나누는 함수로 고정시키 때문에
         # train/validation 데이터셋 구축
         datasets = []
-        for dataset in [(x_train, y_train), (x_valid, y_valid)]:
+        for dataset in [(train_x, train_y), (val_x, val_y)]:
             x_data = np.array(dataset[0])
             y_data = dataset[1]
             datasets.append(torch.utils.data.TensorDataset(torch.Tensor(x_data), torch.Tensor(y_data)))
@@ -65,7 +64,6 @@ class ClassificationML(Trainer):
         self.train_loader = torch.utils.data.DataLoader(trainset, batch_size=batch_size, shuffle=True)
         self.valid_loader = torch.utils.data.DataLoader(validset, batch_size=batch_size, shuffle=True)
         
-        # return train_loader, valid_loader
 
     def getModel(self):
         """
@@ -108,11 +106,12 @@ class ClassificationML(Trainer):
         
         # train model
         init_model = init_model.to(self.device)
+        
         dataloaders_dict = {'train': self.train_loader, 'val': self.valid_loader}
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
-        self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
         
+        self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
         self._trainSaveModel(self.best_model, modelFilePath)
         
         return self.best_model

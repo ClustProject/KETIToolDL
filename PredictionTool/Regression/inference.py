@@ -104,6 +104,8 @@ class RegressionModelTestInference(Inference):
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device, dtype=torch.float)
 
+                model.to(self.device)
+                
                 # forward
                 # input을 model에 넣어 output을 도출
                 outputs = model(inputs)
