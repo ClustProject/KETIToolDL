@@ -48,7 +48,6 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     scalerParam = ModelMeta[modelName]["scalerParam"]
     model_method = ModelMeta[modelName]["model_method"]
     trainParameter = ModelMeta[modelName]["trainParameter"]
-    
 
     # Scaling Test Input
     test_x, scaler_X = p4.getScaledTestData(dataX[featureList], X_scalerFilePath, scalerParam)
@@ -57,9 +56,6 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     batch_size=1
     df_result, result_metrics_df, acc = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum)
     return df_result, result_metrics_df, acc
-    
-    # df_result, result_metrics = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum)
-    # return df_result, result_metrics
 
 
 def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum=0):
@@ -75,17 +71,11 @@ def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scaler
     pred, prob, trues, acc = ci.get_result(model, modelFilePath)
     
     from sklearn.metrics import classification_report
-    target_names = ['class 0', 'class 1', 'class 2', 'class 3', 'class 4', 'class 5']
-    result_metrics = classification_report(trues, pred, target_names = target_names, output_dict = True)
+    result_metrics = classification_report(trues, pred, output_dict = True)
     result_metrics_df = pd.DataFrame(result_metrics).transpose()
     
     df_result = p4.getPredictionDFResult(pred, trues, scalerParam, scaler_y, featureList= target, target_col = target[0])
     
     return df_result, result_metrics_df, acc
-    
-    # df_result = p4.getPredictionDFResult(pred, trues, scalerParam, scaler_y, featureList= target, target_col = target[0])
-    # df_result.index = test_y.index
-    # from KETIToolDataExploration.stats_table import metrics
-    # result_metrics =  metrics.calculate_metrics_df(df_result)
-    # return df_result, result_metrics
+
  
