@@ -54,8 +54,8 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     test_y, scaler_y = p4.getScaledTestData(datay[target], y_scalerFilePath, scalerParam)
     # 4. Testing
     batch_size=1
-    df_result, result_metrics_df, acc = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum)
-    return df_result, result_metrics_df, acc
+    df_result, result_metrics, acc = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum)
+    return df_result, result_metrics, acc
 
 
 def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum=0):
@@ -72,10 +72,10 @@ def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scaler
     
     from sklearn.metrics import classification_report
     result_metrics = classification_report(trues, pred, output_dict = True)
-    result_metrics_df = pd.DataFrame(result_metrics).transpose()
     
     df_result = p4.getPredictionDFResult(pred, trues, scalerParam, scaler_y, featureList= target, target_col = target[0])
+    df_result.index = test_y.index
     
-    return df_result, result_metrics_df, acc
+    return df_result, result_metrics, acc
 
  
