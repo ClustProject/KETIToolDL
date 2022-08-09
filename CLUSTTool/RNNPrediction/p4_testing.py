@@ -37,8 +37,15 @@ def getTestResult(dataName, modelName, DataMeta, ModelMeta, dataRoot, db_client)
     
     prediction, values = getTestValues(test, trainParameter, transformParameter, model_method, modelFilePath)
     df_result = p4.getPredictionDFResult(prediction, values, scalerParam, scaler, featureList, target_col)
+    df_result.index = test[(transformParameter['future_step']+transformParameter['past_step']-1):].index
 
+    """
+    df_result = p4.refineData(df_result)
+    
+    df_result.index = test.index
+    """
     from KETIToolDataExploration.stats_table import metrics
     result_metrics =  metrics.calculate_metrics_df(df_result)
 
     return df_result, result_metrics
+
