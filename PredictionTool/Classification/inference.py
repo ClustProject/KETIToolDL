@@ -40,7 +40,7 @@ class ClassificationModelTestInference(Inference):
         self.test_loader = self.get_testLoader()
         
         # load best model
-        init_model.load_state_dict(torch.load(best_model_path[0]))
+        init_model.load_state_dict(torch.load(best_model_path[0], map_location=self.device))
         
         # get prediction and accuracy
         preds, probs, trues, acc = self.test(init_model, self.test_loader)
@@ -53,7 +53,7 @@ class ClassificationModelTestInference(Inference):
         print("\nStart testing data\n")
 
         # load best model
-        init_model.load_state_dict(torch.load(best_model_path[0]))
+        init_model.load_state_dict(torch.load(best_model_path[0], self.test_loader))
         
         # get prediction and accuracy
         preds, probs, trues, acc = self.test(init_model, self.test_loader)
