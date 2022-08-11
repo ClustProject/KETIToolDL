@@ -37,7 +37,7 @@ def saveCSVData(dataFolderPath, dataName, data):
 
 
 def saveInfluxData(dbName, dataName, data, db_client):
-    db_name = db_name
+    db_name = dbName
     ms_name = dataName
     db_client.write_db(db_name, ms_name, data)
 
