@@ -10,8 +10,9 @@ def getScaledTestData(data, scalerFilePath, scalerParam):
     scaler =None
     result = data
     if scalerParam =='scale':
-        scaler = getScalerFromFile(scalerFilePath)
-        result = getScaledData(data, scaler, scalerParam)
+        if scalerFilePath:
+            scaler = getScalerFromFile(scalerFilePath)
+            result = getScaledData(data, scaler, scalerParam)
     return result, scaler
 
 def getScalerFromFile(scalerFilePath):
@@ -29,9 +30,7 @@ def getScaledData(data, scaler, scalerParam):
 def getPredictionDFResult(predictions, values, scalerParam, scaler, featureList, target_col):
     print(scalerParam)
     if scalerParam =='scale':
-        
         baseDFforInverse = pd.DataFrame(columns=featureList, index=range(len(predictions)))
-
         baseDFforInverse[target_col] = predictions
         prediction_inverse = pd.DataFrame(scaler.inverse_transform(baseDFforInverse), columns=featureList, index=baseDFforInverse.index)
         baseDFforInverse[target_col] = values 
@@ -39,13 +38,10 @@ def getPredictionDFResult(predictions, values, scalerParam, scaler, featureList,
         trues = values_inverse[target_col]
         preds = prediction_inverse[target_col]
         df_result = pd.DataFrame(data={"value": trues, "prediction": preds}, index=baseDFforInverse.index)
-        from sklearn.metrics import mean_absolute_error, mean_squared_error 
-        mse = mean_squared_error(trues, preds)
-        mae = mean_absolute_error(trues, preds)
-        print(f'** Performance of test dataset (After Inverse Scaling)==> MSE = {mse}, MAE = {mae}')
-        print
+
     else:
         df_result = pd.DataFrame(data={"value": values, "prediction": predictions}, index=range(len(predictions)))
+    
     return df_result
 
 def getCleandData(data, cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
