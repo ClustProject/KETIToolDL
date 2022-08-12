@@ -16,6 +16,7 @@ def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integra
     return train, val
 
 def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam, mode = None):
+    
     trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList])
     from KETIPreDataTransformation.trans_for_purpose import machineLearning as ML
     train, val = ML.splitDataByRatio(trainval, splitRatio, mode)
