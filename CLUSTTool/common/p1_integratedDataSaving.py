@@ -10,12 +10,13 @@ sys.path.append("../../..")
 # JH TODO Influx Save Load 부분 작성 보완해야함
 
 
-def saveAndUpdateDataAndMeta(dataFolderPath, DataMetaPath, data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime, dbName="data_integrated_result", db_client=None):
-    from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
-    dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(
-        dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
-    timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
-    dataName = dataDescriptionInfo+'_'+timeIntervalInfo
+def saveAndUpdateDataAndMeta(dataFolderPath, DataMetaPath, data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime, dataName=None, dbName="data_integrated_result", db_client=None):
+    if dataName == None:
+        from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
+        dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(
+            dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
+        timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
+        dataName = dataDescriptionInfo+'_'+timeIntervalInfo
 
     if DataSaveMode == 'influx':
         saveInfluxData(dbName, dataName, data, db_client)
