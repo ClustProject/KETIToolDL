@@ -91,20 +91,21 @@ def getProcessParam(cleanParam):
     return process_param
 
 
-def getIntegrationParam(integration_freq_sec):
+def getIntegrationParam(integration_freq_sec, integration_method, method_param):
     integration_param = {
         "granularity_sec": integration_freq_sec,
-        "param": {},
-        "method": "meta"
+        "param": method_param,
+        "method": integration_method
     }
+    
     return integration_param
 
 
-def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime):
+def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}):
     from KETIPreDataSelection.data_selection.setSelectionParameter import makeIntDataInfoSet
     intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
 
-    integrationParam = getIntegrationParam(integration_freq_sec)
+    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param)
 
     from KETIPreDataIntegration.clustDataIntegration import ClustIntegration
     data = ClustIntegration().clustIntegrationFromInfluxSource(
