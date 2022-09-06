@@ -39,6 +39,10 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     dataSaveMode_y = DataMeta[dataName_y]["integrationInfo"]["DataSaveMode"]
     dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataFolderPath)
     datay = p2.getSavedIntegratedData(dataSaveMode_y, dataName_y, dataFolderPath)
+    
+    if modelName.split("_")[1] == "ML":
+        datay = datay.iloc[1:]
+    
     X_scalerFilePath = ModelMeta[modelName]['files']['XScalerFile']["filePath"]
     y_scalerFilePath = ModelMeta[modelName]['files']['yScalerFile']["filePath"]
     modelFilePath = ModelMeta[modelName]['files']['modelFile']["filePath"]

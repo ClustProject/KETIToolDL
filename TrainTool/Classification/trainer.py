@@ -45,11 +45,15 @@ class ClassificationML(Trainer):
         :type trainParameter: dictionary
         """
         from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
-        train_x, train_y = transDFtoNP(train_x, train_y, windowNum)
-        val_x, val_y = transDFtoNP(val_x, val_y, windowNum)
+        dim = 3
+        #if self.model_name == "FC_cf":
+        #    dim = 2
+        train_x, train_y = transDFtoNP(train_x, train_y, windowNum, dim)
+        val_x, val_y = transDFtoNP(val_x, val_y, windowNum, dim)
 
         self.parameter['input_size'] = train_x.shape[1]
-        self.parameter['seq_len']  = train_x.shape[2] # seq_length
+        if dim != 2:
+            self.parameter['seq_len']  = train_x.shape[2] # seq_length
         
         ## TODO 아래 코드 군더더기 저럴 필요 없음 어짜피 이 함수는 Train을 넣으면 Train, Valid 나누는 함수로 고정시키 때문에
         # train/validation 데이터셋 구축
@@ -184,7 +188,7 @@ class ClassificationML(Trainer):
                     
                     # parameter gradients를 0으로 설정
                     optimizer.zero_grad()
-
+                    
                     # forward
                     # training 단계에서만 gradient 업데이트 수행
                     with torch.set_grad_enabled(phase == 'train'):
