@@ -91,10 +91,10 @@ def getProcessParam(cleanParam):
     return process_param
 
 
-def getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_criteria):
+def getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria):
     integration_param = {
         "granularity_sec": integration_freq_sec,
-        "integration_criteria" : integration_criteria,
+        "integration_duration_criteria" : integration_duration_criteria,
         "param": method_param,
         "method": integration_method
     }
@@ -102,15 +102,18 @@ def getIntegrationParam(integration_freq_sec, integration_method, method_param, 
     return integration_param
 
 
-def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_criteria = 'common'):
+def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common', dataReadMode = None, dataSet = None):
     from KETIPreDataSelection.data_selection.setSelectionParameter import makeIntDataInfoSet
-    intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
+    if dataReadMode == "input":
+        intDataInfo = None
+    else:
+        intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
 
-    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_criteria)
+    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
 
     from KETIPreDataIntegration.clustDataIntegration import ClustIntegration
     data = ClustIntegration().clustIntegrationFromInfluxSource(
-        db_client, intDataInfo, processParam, integrationParam)
+        db_client, intDataInfo, processParam, integrationParam, dataReadMode, dataSet)
 
     return data
 
@@ -171,4 +174,5 @@ def saveJsonMeta(DataMetaPath, dataName, processParam, dataInfo, integration_fre
     DataInfo["DataSaveMode"] = DataSaveMode
     DataMeta[dataName] = {}
     DataMeta[dataName]["integrationInfo"] = DataInfo
+
     writeJsonData(DataMetaPath, DataMeta)
