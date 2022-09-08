@@ -18,7 +18,6 @@ def make_different_freq_data(data, splitNum, transform_freqlist, freqTransformMo
     split_dataset = {}
     for num in range(splitNum):
         data_c = data.copy()
-        print(data.info())
         ## 서로 다른 주기 별 데이터 생성
         if freqTransformMode == "drop":
             ## data frequency transform
