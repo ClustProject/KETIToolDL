@@ -46,8 +46,8 @@ class ClassificationML(Trainer):
         """
         from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
         dim = 3
-        #if self.model_name == "FC_cf":
-        #    dim = 2
+        if self.model_name == "FC_cf":
+            dim = 2
         train_x, train_y = transDFtoNP(train_x, train_y, windowNum, dim)
         val_x, val_y = transDFtoNP(val_x, val_y, windowNum, dim)
 
@@ -156,7 +156,7 @@ class ClassificationML(Trainer):
         :return: trained model
         :rtype: model
         """
-
+        
         since = time.time()
 
         val_acc_history = []
