@@ -13,15 +13,16 @@ sys.path.append("../../..")
 from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 
 
-def make_different_freq_data(data, splitNum, transform_freqlist, freqTransformMode): ## db ms name 어쩔겨?
+def make_different_freq_data(data, splitNum, transform_freqlist, freqTransformMode):
     columns = data.columns
+    print(columns)
     split_dataset = {}
     for num in range(splitNum):
         data_c = data.copy()
         ## 서로 다른 주기 별 데이터 생성
         if freqTransformMode == "drop":
             ## data frequency transform
-            split_data = data.iloc[[idx for idx in data.index if idx%transform_freqlist[num]==0]]
+            split_data = data_c.iloc[[idx for idx in data_c.index if idx%transform_freqlist[num]==0]]
             ## set data index
             split_data.set_index(['datetime'], inplace = True)
         else: # freqTransformMode == "sampling"
@@ -29,6 +30,7 @@ def make_different_freq_data(data, splitNum, transform_freqlist, freqTransformMo
             data_c.set_index(['datetime'], inplace = True)
             split_data = data_c.resample(str(transform_freqlist[num])+'S').mean()
 
+        print(split_data)
         ## get split data
         split_data = split_data[columns[splitNum*num:splitNum*(num+1)]]
 
@@ -60,16 +62,23 @@ def getIntegratedDataFrom3array(original_dataset, db_client, splitNum, rename_co
         data_x.rename(columns = rename_columns, inplace = True)
         timeIndex = pd.date_range(start=startTime, freq = original_freq, periods=seq_len)
         data_x['datetime'] = timeIndex
-        
-        # make split dataSet
-        dataSet = make_different_freq_data(data_x, splitNum, transform_freqlist, freqTransformMode)
         count+=1
-
-        # get integrated data
-        int_data = p1.getData(db_client, dataInfo, integration_freq_sec, 
-                          processParam, startTime, endTime, integration_method, transformParam, 
-                          integration_duration_criteria, dataReadMode, dataSet)
         
+        # original data
+        if splitNum == 1:
+            int_data = data_x.copy()
+            int_data = int_data.iloc[[idx for idx in int_data.index if idx%integration_freq_sec == 0]] # modification method : drop
+            int_data.set_index(['datetime'], inplace = True)
+            
+        else:
+            # make split dataSet
+            dataSet = make_different_freq_data(data_x, splitNum, transform_freqlist, freqTransformMode)
+            
+            # get integrated data
+            int_data = p1.getData(db_client, dataInfo, integration_freq_sec, 
+                            processParam, startTime, endTime, integration_method, transformParam, 
+                            integration_duration_criteria, dataReadMode, dataSet)
+            
         # get integrated data length
         windows = len(int_data)
         print("++++++++ integrated data length : ", windows, "++++++++")
