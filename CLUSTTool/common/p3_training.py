@@ -15,18 +15,17 @@ def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integra
         pass
     return train, val
 
-def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam, mode = None, windows=None):
-    
-    trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList])
+def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam, scaleMethod ='minmax', mode = None, windows=None):
+    trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList], scaleMethod)
     from KETIPreDataTransformation.trans_for_purpose import machineLearning as ML
     train, val = ML.splitDataByRatio(trainval, splitRatio, mode, windows)
     
     return train, val, scalerFilePath
 
-def getScaledData(scalerParam, scalerRootpath, data):
+def getScaledData(scalerParam, scalerRootpath, data, scaleMethod):
     if scalerParam=='scale':
         from KETIPreDataTransformation.general_transformation.dataScaler import DataScaler
-        DS = DataScaler('minmax', scalerRootpath )
+        DS = DataScaler(scaleMethod, scalerRootpath )
         #from KETIPreDataTransformation.general_transformation import dataScaler
         #feature_col_list = dataScaler.get_scalable_columns(train_o)
         DS.setScaleColumns(list(data.columns))
