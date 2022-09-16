@@ -9,24 +9,19 @@ sys.path.append("../../..")
 # JH TODO 아래 코드에 대한 주석 작성
 # JH TODO Influx Save Load 부분 작성 보완해야함
 
+def getListMerge(infoList):
+    MergedName = ''
+    for info in infoList:
+        MergedName = MergedName+info+'_'
+    return MergedName
 
-def saveAndUpdateDataAndMeta(dataFolderPath, DataMetaPath, data, processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime, dataName=None, dbName="data_integrated_result", db_client=None):
-    if dataName == None:
-        from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
-        dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(
-            dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
-        timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
-        dataName = dataDescriptionInfo+'_'+timeIntervalInfo
 
-    if DataSaveMode == 'influx':
-        saveInfluxData(dbName, dataName, data, db_client)
-    elif DataSaveMode == 'CSV':
-        saveCSVData(dataFolderPath, dataName, data)
-
-    # Save Json Meta
-    saveJsonMeta(DataMetaPath, dataName, processParam, dataInfo,
-                 integration_freq_sec, startTime, endTime, cleanParam, DataSaveMode)
-    # Save Mongo Meta
+def getNewDataName(processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime):
+    from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
+    dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
+    timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
+    dataName = dataDescriptionInfo+'_'+timeIntervalInfo
+    return dataName
 
 
 def saveCSVData(dataFolderPath, dataName, data):
@@ -35,6 +30,7 @@ def saveCSVData(dataFolderPath, dataName, data):
 
     fileName = os.path.join(dataFolderPath, dataName + '.csv')
     data.to_csv(fileName)
+    return fileName
 
 
 def saveInfluxData(dbName, dataName, data, db_client):
@@ -116,13 +112,6 @@ def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, 
         db_client, intDataInfo, processParam, integrationParam, dataReadMode, dataSet)
 
     return data
-
-
-def getListMerge(infoList):
-    MergedName = ''
-    for info in infoList:
-        MergedName = MergedName+info+'_'
-    return MergedName
 
 
 def writeJsonData(jsonFilePath, Data):
