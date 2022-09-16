@@ -73,13 +73,13 @@ class RNNStyleModelTestInference(Inference):
         self.infModel = IM.model
         self.infModel.load_state_dict(torch.load(modelFilePath[0]))
 
-    def setTestData(self, test, transformParameter):
+    def setTestData(self, test, transformParameter, cleanParam):
         from torch.utils.data import DataLoader
         
         from KETIPreDataTransformation.trans_for_purpose.machineLearning import  LSTMData
         self.input_dim = len(transformParameter['feature_col'])
         LSTMD = LSTMData()
-        testX_arr, testy_arr = LSTMD.transformXyArr(test, transformParameter)
+        testX_arr, testy_arr = LSTMD.transformXyArr(test, transformParameter, cleanParam)
         self.test_DataSet, self.test_loader = LSTMD.getTorchLoader(testX_arr, testy_arr, self.batch_size)
         #test_loader_one = DataLoader(test_DataSet, batch_size=1, shuffle=False, drop_last=True)
 
