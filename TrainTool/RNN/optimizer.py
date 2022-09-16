@@ -30,7 +30,7 @@ class Optimization:
             loss_fn (torch.nn.modules.Loss): Loss function to calculate the losses
             optimizer (torch.optim.Optimizer): Optimizer function to optimize the loss function
         """
-        self.model = model
+        self.model = model.to(device)
         self.loss_fn = loss_fn
         self.optimizer = optimizer
         self.train_losses = []
