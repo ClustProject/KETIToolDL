@@ -16,9 +16,9 @@ class ClassificationModelTestInference(Inference):
         self.batch_size = batch_size
         self.device = device
         
-    def transInputDFtoNP(self, windowNum= 0):
+    def transInputDFtoNP(self, windowNum= 0, dim=None):
         from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
-        self.X, self.y = transDFtoNP(self.X, self.y, windowNum)
+        self.X, self.y = transDFtoNP(self.X, self.y, windowNum, dim)
         
     def get_testLoader(self):
         """

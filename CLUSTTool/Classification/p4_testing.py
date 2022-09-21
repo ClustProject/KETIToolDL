@@ -33,15 +33,11 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     return df_result, result_metrics
 
 """
-def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFolderPath, device, windowNum=0, db_client=None):
-
+def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFolderPath, device, windowNum=0, db_client=None, dim = None):
     dataSaveMode_X = DataMeta[dataName_X]["integrationInfo"]["DataSaveMode"]
     dataSaveMode_y = DataMeta[dataName_y]["integrationInfo"]["DataSaveMode"]
     dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataFolderPath)
     datay = p2.getSavedIntegratedData(dataSaveMode_y, dataName_y, dataFolderPath)
-    
-    #if modelName.split("_")[1] == "ML":
-    #    datay = datay.iloc[1:]
     
     X_scalerFilePath = ModelMeta[modelName]['files']['XScalerFile']["filePath"]
     y_scalerFilePath = ModelMeta[modelName]['files']['yScalerFile']["filePath"]
@@ -61,11 +57,11 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     # 4. Testing
     batch_size=1
     scalerParam="noScale" # for classification
-    df_result, result_metrics, acc = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum)
+    df_result, result_metrics, acc = getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum, dim)
     return df_result, result_metrics, acc
 
 
-def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum=0):
+def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scalerParam, scaler_y, trainParameter, batch_size, device, windowNum=0, dim= None):
     import pandas as pd
     from KETIToolDL.TrainTool.Classification.trainer import ClassificationML as CML
 
@@ -74,7 +70,7 @@ def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scaler
 
     from KETIToolDL.PredictionTool.Classification.inference import ClassificationModelTestInference as CTI
     ci = CTI(test_x, test_y, batch_size, device)
-    ci.transInputDFtoNP(windowNum)
+    ci.transInputDFtoNP(windowNum, dim)
     pred, prob, trues, acc = ci.get_result(model, modelFilePath)
     from sklearn.metrics import classification_report
     result_metrics = classification_report(trues, pred, output_dict = True)
