@@ -116,10 +116,10 @@ class ClassificationML(Trainer):
         criterion = nn.CrossEntropyLoss()
         optimizer = optim.Adam(init_model.parameters(), lr=self.parameter['lr'])
         
-        self.best_model = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
+        self.best_model, self.timeElapsed = self.train(init_model, dataloaders_dict, criterion, num_epochs, optimizer, self.device)
         self._trainSaveModel(self.best_model, modelFilePath)
         
-        return self.best_model
+        return self.best_model, self.timeElapsed
         
     def _trainSaveModel(self, best_model, modelFilePath):
         """
@@ -136,6 +136,7 @@ class ClassificationML(Trainer):
     def train(self, model, dataloaders, criterion, num_epochs, optimizer, device):
         import time
         import copy
+        import datetime
         """
         Train the model
 
@@ -227,9 +228,10 @@ class ClassificationML(Trainer):
 
         # 전체 학습 시간 계산
         time_elapsed = time.time() - since
+        timeElapsed = str(datetime.timedelta(seconds=time_elapsed))
         print('\nTraining complete in {:.0f}m {:.0f}s'.format(time_elapsed // 60, time_elapsed % 60))
         print('Best val Acc: {:4f}'.format(best_acc))
 
         # validation loss가 가장 낮았을 때의 best model 가중치를 불러와 best model을 구축함
         model.load_state_dict(best_model_wts)
-        return model
+        return model, timeElapsed

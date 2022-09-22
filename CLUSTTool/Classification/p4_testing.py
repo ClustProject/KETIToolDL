@@ -33,7 +33,7 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     return df_result, result_metrics
 
 """
-def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFolderPath, device, windowNum=0, db_client=None, dim = None):
+def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFolderPath, device, windowNum=0, db_client=None):
     dataSaveMode_X = DataMeta[dataName_X]["integrationInfo"]["DataSaveMode"]
     dataSaveMode_y = DataMeta[dataName_y]["integrationInfo"]["DataSaveMode"]
     dataX = p2.getSavedIntegratedData(dataSaveMode_X, dataName_X, dataFolderPath)
@@ -48,6 +48,11 @@ def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFo
     scalerParam = ModelMeta[modelName]["scalerParam"]
     model_method = ModelMeta[modelName]["model_method"]
     trainParameter = ModelMeta[modelName]["trainParameter"]
+    
+    dim = None
+    if model_method == "FC_cf":
+        dim = 2
+    
     # Scaling Test Input
 
     test_x, scaler_X = p4.getScaledTestData(dataX[featureList], X_scalerFilePath, scalerParam)
