@@ -98,18 +98,22 @@ def getIntegrationParam(integration_freq_sec, integration_method, method_param, 
     return integration_param
 
 
-def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common', dataReadMode = None, dataSet = None):
+def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
     from KETIPreDataSelection.data_selection.setSelectionParameter import makeIntDataInfoSet
-    if dataReadMode == "input":
-        intDataInfo = None
-    else:
-        intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
+    intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
 
     integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
 
     from KETIPreDataIntegration.clustDataIntegration import ClustIntegration
-    data = ClustIntegration().clustIntegrationFromInfluxSource(
-        db_client, intDataInfo, processParam, integrationParam, dataReadMode, dataSet)
+    data = ClustIntegration().clustIntegrationFromInfluxSource(db_client, intDataInfo, processParam, integrationParam)
+
+    return data
+
+def getIntDataFromDataset(integration_freq_sec, processParam, dataSet, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
+    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
+    
+    from KETIPreDataIntegration.clustDataIntegration import ClustIntegration
+    data = ClustIntegration().clustIntegrationFromDataset(processParam, integrationParam, dataSet)
 
     return data
 
