@@ -1,6 +1,9 @@
 import torch.nn as nn
 import torch
 
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+
 class RNNModel(nn.Module):
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim, dropout_prob):
         """The __init__ method that initiates an RNN instance.
@@ -37,7 +40,8 @@ class RNNModel(nn.Module):
 
         """
         # Initializing hidden state for first input with zeros
-        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
+        h0 = torch.zeros(self.layer_dim, x.size(
+            0), self.hidden_dim).requires_grad_()
 
         # Forward propagation by passing in the input and hidden state into the model
         out, h0 = self.rnn(x, h0.detach())
@@ -49,6 +53,7 @@ class RNNModel(nn.Module):
         # Convert the final state to our desired output shape (batch_size, output_dim)
         out = self.fc(out)
         return out
+
 
 class LSTMModel(nn.Module):
     """LSTMModel class extends nn.Module class and works as a constructor for LSTMs.
@@ -68,6 +73,7 @@ class LSTMModel(nn.Module):
                            of LSTMs to our desired output shape.
 
     """
+
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim, dropout_prob):
         """The __init__ method that initiates a LSTM instance.
 
@@ -104,10 +110,12 @@ class LSTMModel(nn.Module):
 
         """
         # Initializing hidden state for first input with zeros
-        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
+        h0 = torch.zeros(self.layer_dim, x.size(
+            0), self.hidden_dim).requires_grad_()
 
         # Initializing cell state for first input with zeros
-        c0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
+        c0 = torch.zeros(self.layer_dim, x.size(
+            0), self.hidden_dim).requires_grad_()
 
         # We need to detach as we are doing truncated backpropagation through time (BPTT)
         # If we don't, we'll backprop all the way to the start even after going through another batch
@@ -122,6 +130,7 @@ class LSTMModel(nn.Module):
         out = self.fc(out)
 
         return out
+
 
 class GRUModel(nn.Module):
     """GRUModel class extends nn.Module class and works as a constructor for GRUs.
@@ -141,6 +150,7 @@ class GRUModel(nn.Module):
                            of GRUs to our desired output shape.
 
     """
+
     def __init__(self, input_dim, hidden_dim, layer_dim, output_dim, dropout_prob):
         """The __init__ method that initiates a GRU instance.
 
@@ -177,10 +187,16 @@ class GRUModel(nn.Module):
 
         """
         # Initializing hidden state for first input with zeros
-        h0 = torch.zeros(self.layer_dim, x.size(0), self.hidden_dim).requires_grad_()
+        h0 = torch.zeros(self.layer_dim, x.size(
+            0), self.hidden_dim).requires_grad_()
 
         # Forward propagation by passing in the input and hidden state into the model
-        out, _ = self.gru(x, h0.detach())
+
+        ## ======================== 이 수정, 추후 책임님 검토 ========================
+        if device == 'cuda':
+            out, _ = self.gru(x, h0.detach().cuda())
+        else:
+            out, _ = self.gru(x, h0.detach())
 
         # Reshaping the outputs in the shape of (batch_size, seq_length, hidden_size)
         # so that it can fit into the fully connected layer
@@ -190,4 +206,3 @@ class GRUModel(nn.Module):
         out = self.fc(out)
 
         return out
-
