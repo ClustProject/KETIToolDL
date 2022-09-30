@@ -171,10 +171,10 @@ class GRUModel(nn.Module):
         # GRU layers
         self.gru = nn.GRU(
             input_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
-        )
+        ).to(device)
 
         # Fully connected layer
-        self.fc = nn.Linear(hidden_dim, output_dim)
+        self.fc = nn.Linear(hidden_dim, output_dim).to(device)
 
     def forward(self, x):
         """The forward method takes input tensor x and does forward propagation

@@ -93,7 +93,7 @@ class RNNStyleModelTestInference(Inference):
                 y_test = y_test.to(device)
                 self.infModel.eval()
                 yhat = self.infModel(x_test)
-                predictions.append(yhat.to(device).detach().numpy().ravel()[0])
-                values.append(y_test.to(device).detach().numpy().ravel()[0])
+                predictions.append(yhat.to('cpu').detach().numpy().ravel()[0])
+                values.append(y_test.to('cpu').detach().numpy().ravel()[0])
         return predictions, values
 
