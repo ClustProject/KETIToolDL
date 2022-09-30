@@ -2,7 +2,8 @@ from KETIToolDL.PredictionTool.inference import Inference
 import torch
 import numpy as np
 #device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
-device = torch.device("cpu")
+# device = torch.device("cpu")
+device = "cuda" if torch.cuda.is_available() else "cpu"
 class RNNStyleModelInfernce(Inference):
     # For small data without answer
     def __init__(self):
