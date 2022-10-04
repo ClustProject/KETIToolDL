@@ -51,11 +51,11 @@ class RNNStyleModelInfernce(Inference):
         return inference_input_tensor
 
     def setData(self, data):
-        self.data = data
+        self.data = data.to(device)
   
     def get_result(self):
         yhat = self.infModel(self.data)
-        result = yhat.to(device).detach().numpy()
+        result = yhat.to('cpu').detach().numpy()
         return result
 
 
