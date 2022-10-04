@@ -8,10 +8,18 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import numpy as np
+import random
+import time
+import copy
+import datetime
+from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+from KETIToolDL.TrainTool.Classification.lstm_fcn import LSTM_FCNs
+from KETIToolDL.TrainTool.Classification.rnn import RNN_model
+from KETIToolDL.TrainTool.Classification.cnn_1d import CNN_1D
+from KETIToolDL.TrainTool.Classification.fc import FC
 
 class ClassificationML(Trainer):
     def __init__(self, model_name, parameter):
-        import random
         # seed 고정
         random_seed = 42
 
@@ -44,7 +52,7 @@ class ClassificationML(Trainer):
         :param trainParameter: 모델 학습 Parameter
         :type trainParameter: dictionary
         """
-        from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+        
         dim = 3
         if self.model_name == "FC_cf":
            dim = 2
@@ -74,11 +82,6 @@ class ClassificationML(Trainer):
         """
         Build model and return initialized model for selected model_name
         """
-        from KETIToolDL.TrainTool.Classification.lstm_fcn import LSTM_FCNs
-        from KETIToolDL.TrainTool.Classification.rnn import RNN_model
-        from KETIToolDL.TrainTool.Classification.cnn_1d import CNN_1D
-        from KETIToolDL.TrainTool.Classification.fc import FC
-        
         if self.model_name == 'LSTM_cf':
             self.parameter["rnn_type"] = 'lstm'
         elif self.model_name == 'GRU_cf':
@@ -134,9 +137,6 @@ class ClassificationML(Trainer):
         torch.save(best_model.state_dict(), modelFilePath[0])
         
     def train(self, model, dataloaders, criterion, num_epochs, optimizer, device):
-        import time
-        import copy
-        import datetime
         """
         Train the model
 
