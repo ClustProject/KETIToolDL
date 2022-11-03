@@ -4,11 +4,11 @@ import pandas as pd
 
 sys.path.append("../")
 
+from sklearn.metrics import classification_report
 from KETIToolDL.CLUSTTool.common import p4_testing as p4
 from KETIToolDL.CLUSTTool.common import p2_dataSelection as p2
 from KETIToolDL.TrainTool.Classification.trainer import ClassificationML as CML
 from KETIToolDL.PredictionTool.Classification.inference import ClassificationModelTestInference as CTI
-from sklearn.metrics import classification_report
 
 def getTestResult(dataName_X, dataName_y, modelName, DataMeta, ModelMeta, dataFolderPath, device, windowNum=0, db_client=None):
     dataSaveMode_X = DataMeta[dataName_X]["integrationInfo"]["DataSaveMode"]
