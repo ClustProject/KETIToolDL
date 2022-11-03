@@ -27,7 +27,7 @@ class RNNStyleModelInfernce(Inference):
         IM.getModel(model_method)
         import torch
         self.infModel = IM.model
-        self.infModel.load_state_dict(torch.load(modelFilePath[0]))
+        self.infModel.load_state_dict(torch.load(modelFilePath[0])) # gpu환경에서 훈련한 모델을 cpu 환경에서 실행시, map_location='cpu' 필요
         self.infModel.eval()
 
     def getTensorInput(self, data):

@@ -94,7 +94,7 @@ class LSTMModel(nn.Module):
         # LSTM layers
         self.lstm = nn.LSTM(
             input_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
-        ).to(device)
+        ).to(device) # device check
 
         # Fully connected layer
         self.fc = nn.Linear(hidden_dim, output_dim).to(device)
@@ -171,7 +171,7 @@ class GRUModel(nn.Module):
         # GRU layers
         self.gru = nn.GRU(
             input_dim, hidden_dim, layer_dim, batch_first=True, dropout=dropout_prob
-        ).to(device)
+        ).to(device) # device check
 
         # Fully connected layer
         self.fc = nn.Linear(hidden_dim, output_dim).to(device)
@@ -193,7 +193,7 @@ class GRUModel(nn.Module):
         # Forward propagation by passing in the input and hidden state into the model
 
         ## ======================== 이 수정, 추후 책임님 검토 ========================
-        if device == 'cuda':
+        if device == 'cuda': # gpu, cpu check
             out, _ = self.gru(x, h0.detach().cuda())
         else:
             out, _ = self.gru(x, h0.detach())
