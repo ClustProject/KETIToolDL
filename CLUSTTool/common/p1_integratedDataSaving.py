@@ -99,8 +99,8 @@ def getIntegrationParam(integration_freq_sec, integration_method, method_param, 
 
 
 def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
-    from KETIPreDataSelection.data_selection.setSelectionParameter import makeIntDataInfoSet
-    intDataInfo = makeIntDataInfoSet(dataInfo, startTime, endTime)
+    from KETIPreDataIntegration.utils import param
+    intDataInfo = param.makeIntDataInfoSet(dataInfo, startTime, endTime)
 
     integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
 
