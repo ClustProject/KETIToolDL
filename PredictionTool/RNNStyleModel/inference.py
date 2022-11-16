@@ -77,7 +77,7 @@ class RNNStyleModelTestInference(Inference):
     def setTestData(self, test, transformParameter, cleanParam):
         from torch.utils.data import DataLoader
         
-        from KETIPreDataTransformation.trans_for_purpose.machineLearning import  LSTMData
+        from KETIPreDataTransformation.purpose.machineLearning import  LSTMData
         self.input_dim = len(transformParameter['feature_col'])
         LSTMD = LSTMData()
         testX_arr, testy_arr = LSTMD.transformXyArr(test, transformParameter, cleanParam)

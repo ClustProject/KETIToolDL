@@ -48,7 +48,7 @@ class RegressionML(Trainer):
         
         # load dataloder
         
-        from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+        from KETIPreDataTransformation.dataType.DFToNPArray import transDFtoNP
         train_x, train_y = transDFtoNP(train_x, train_y, windowNum)
         val_x, val_y = transDFtoNP(val_x, val_y, windowNum)
 

@@ -12,7 +12,7 @@ import random
 import time
 import copy
 import datetime
-from KETIPreDataTransformation.dataFormatTransformation.DFToNPArray import transDFtoNP
+from KETIPreDataTransformation.dataType.DFToNPArray import transDFtoNP
 from KETIToolDL.TrainTool.Classification.lstm_fcn import LSTM_FCNs
 from KETIToolDL.TrainTool.Classification.rnn import RNN_model
 from KETIToolDL.TrainTool.Classification.cnn_1d import CNN_1D

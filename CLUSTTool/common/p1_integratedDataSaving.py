@@ -17,7 +17,7 @@ def getListMerge(infoList):
 
 
 def getNewDataName(processParam, dataInfo, integration_freq_sec, cleanParam, DataSaveMode, startTime, endTime):
-    from KETIPreDataTransformation.general_transformation.dataScaler import encodeHashStyle
+    from KETIPreDataTransformation.general.dataScaler import encodeHashStyle
     dataDescriptionInfo = encodeHashStyle(getListMerge([str(processParam), str(dataInfo), str(integration_freq_sec), cleanParam, DataSaveMode]))
     timeIntervalInfo = encodeHashStyle(getListMerge([startTime, endTime]))
     dataName = dataDescriptionInfo+'_'+timeIntervalInfo
