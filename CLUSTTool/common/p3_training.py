@@ -44,7 +44,7 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     NanInfoForCleanData=NaNProcessingParam['NanInfoForCleanData']
 
     feature_list = dataSet.columns
-    from KETIPreDataIngestion.dataByCondition import cycle_Module
+    from KETIPreDataIngestion.quality import cycle_Module
 
     dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
     import matplotlib.pyplot as plt
