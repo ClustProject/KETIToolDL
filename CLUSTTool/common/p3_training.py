@@ -1,6 +1,7 @@
 import os, sys
 sys.path.append("../")
-
+sys.path.append("../../")
+sys.path.append("../../../")
 from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 import pandas as pd
 
@@ -44,12 +45,12 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     NanInfoForCleanData=NaNProcessingParam['NanInfoForCleanData']
 
     feature_list = dataSet.columns
-    from KETIPreDataIngestion.quality.cycle.import cycle_Module
+    from KETIPreDataTransformation.quality.dataByCycle import cycle_Module
 
     dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
     import matplotlib.pyplot as plt
 
-    from KETIPrePartialDataPreprocessing.quality.NaN.import clean_feature_data
+    from KETIPrePartialDataPreprocessing.quality.NaN import clean_feature_data
     CMS = clean_feature_data.CleanFeatureData(feature_list, timedelta_frequency_sec)
     refinedData, filterImputedData = CMS.getMultipleCleanDataSetsByDF(dayCycle, NanInfoForCleanData)
     CleanData = pd.concat(filterImputedData.values())
