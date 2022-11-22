@@ -50,7 +50,7 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
     import matplotlib.pyplot as plt
 
-    from KETIPrePartialDataPreprocessing.quality.NaN import clean_feature_data
+    from Clust.clust.preprocessing.quality.NaN import clean_feature_data
     CMS = clean_feature_data.CleanFeatureData(feature_list, timedelta_frequency_sec)
     refinedData, filterImputedData = CMS.getMultipleCleanDataSetsByDF(dayCycle, NanInfoForCleanData)
     CleanData = pd.concat(filterImputedData.values())
