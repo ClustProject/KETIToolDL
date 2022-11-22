@@ -27,7 +27,7 @@ class RegressionModelTestInference(Inference):
         self.device = device
 
     def transInputDFtoNP(self, windowNum= 0):
-        from KETIPreDataTransformation.dataType.DFToNPArray import transDFtoNP
+        from Clust.clust.transformation.dataType.DFToNPArray import transDFtoNP
         self.X, self.y = transDFtoNP(self.X, self.y, windowNum)
 
     def get_testLoader(self):

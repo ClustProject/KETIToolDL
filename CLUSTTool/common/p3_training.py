@@ -18,16 +18,16 @@ def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integra
 
 def getTrainValData(data, featureList, scalerRootPath, splitRatio, scalerParam, scaleMethod ='minmax', mode = None, windows=None):
     trainval, scalerFilePath = getScaledData(scalerParam, scalerRootPath, data[featureList], scaleMethod)
-    from KETIPreDataTransformation.purpose import machineLearning as ML
+    from Clust.clust.transformation.purpose import machineLearning as ML
     train, val = ML.splitDataByRatio(trainval, splitRatio, mode, windows)
     
     return train, val, scalerFilePath
 
 def getScaledData(scalerParam, scalerRootpath, data, scaleMethod):
     if scalerParam=='scale':
-        from KETIPreDataTransformation.general.dataScaler import DataScaler
+        from Clust.clust.transformation.general.dataScaler import DataScaler
         DS = DataScaler(scaleMethod, scalerRootpath )
-        #from KETIPreDataTransformation.general import dataScaler
+        #from Clust.clust.transformation.general import dataScaler
         #feature_col_list = dataScaler.get_scalable_columns(train_o)
         DS.setScaleColumns(list(data.columns))
         DS.setNewScaler(data)
@@ -45,7 +45,7 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     NanInfoForCleanData=NaNProcessingParam['NanInfoForCleanData']
 
     feature_list = dataSet.columns
-    from KETIPreDataTransformation.quality.dataByCycle import cycle_Module
+    from Clust.clust.transformation.quality.dataByCycle import cycle_Module
 
     dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
     import matplotlib.pyplot as plt

@@ -67,7 +67,7 @@ class BritsTrainer(Trainer):
 class RNNStyleModelTrainer(Trainer):
     def processInputData(self, train, val, transformParameter, cleanParam, batch_size):
         self.batch_size = batch_size
-        from KETIPreDataTransformation.purpose.machineLearning import  LSTMData
+        from Clust.clust.transformation.purpose.machineLearning import  LSTMData
         LSTMD = LSTMData()
         trainX_arr, trainy_arr = LSTMD.transformXyArr(train, transformParameter, cleanParam)
         self.train_DataSet, self.train_loader = LSTMD.getTorchLoader(trainX_arr, trainy_arr,  batch_size)
