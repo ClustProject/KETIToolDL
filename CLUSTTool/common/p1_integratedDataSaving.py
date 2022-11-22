@@ -99,12 +99,12 @@ def getIntegrationParam(integration_freq_sec, integration_method, method_param, 
 
 
 def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
-    from KETIPreDataIntegration.utils import param
+    from Clust.clust.integration.utils import param
     intDataInfo = param.makeIntDataInfoSet(dataInfo, startTime, endTime)
 
     integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
 
-    from KETIPreDataIntegration.clustDataIntegration import ClustIntegration
+    from Clust.clust.integration.clustDataIntegration import ClustIntegration
     data = ClustIntegration().clustIntegrationFromInfluxSource(db_client, intDataInfo, processParam, integrationParam)
 
     return data
@@ -112,7 +112,7 @@ def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, 
 def getIntDataFromDataset(integration_freq_sec, processParam, dataSet, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
     integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
     
-    from KETIPreDataIntegration.clustDataIntegration import ClustIntegration
+    from Clust.clust.integration.clustDataIntegration import ClustIntegration
     data = ClustIntegration().clustIntegrationFromDataset(processParam, integrationParam, dataSet)
 
     return data
