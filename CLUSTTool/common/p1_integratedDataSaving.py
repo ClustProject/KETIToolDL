@@ -87,10 +87,10 @@ def getProcessParam(cleanParam):
     return process_param
 
 
-def getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria):
+def getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration):
     integration_param = {
         "granularity_sec": integration_freq_sec,
-        "integration_duration_criteria" : integration_duration_criteria,
+        "integration_duration" : integration_duration,
         "param": method_param,
         "method": integration_method
     }
@@ -98,22 +98,22 @@ def getIntegrationParam(integration_freq_sec, integration_method, method_param, 
     return integration_param
 
 
-def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
+def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, endTime, integration_method = 'meta', method_param = {}, integration_duration = 'common'):
     from Clust.clust.integration.utils import param
     intDataInfo = param.makeIntDataInfoSet(dataInfo, startTime, endTime)
 
-    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
+    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration)
 
-    from Clust.clust.integration.clustDataIntegration import ClustIntegration
-    data = ClustIntegration().clustIntegrationFromInfluxSource(db_client, intDataInfo, processParam, integrationParam)
+    from Clust.clust.integration.integrationInterface import IntegrationInterface
+    data = IntegrationInterface().clustIntegrationFromInfluxSource(db_client, intDataInfo, processParam, integrationParam)
 
     return data
 
-def getIntDataFromDataset(integration_freq_sec, processParam, dataSet, integration_method = 'meta', method_param = {}, integration_duration_criteria = 'common'):
-    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration_criteria)
+def getIntDataFromDataset(integration_freq_sec, processParam, dataSet, integration_method = 'meta', method_param = {}, integration_duration = 'common'):
+    integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration)
     
-    from Clust.clust.integration.clustDataIntegration import ClustIntegration
-    data = ClustIntegration().clustIntegrationFromDataset(processParam, integrationParam, dataSet)
+    from Clust.clust.integration.integrationInterface import IntegrationInterface
+    data = IntegrationInterface().clustIntegrationFromDataset(processParam, integrationParam, dataSet)
 
     return data
 
