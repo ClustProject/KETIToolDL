@@ -56,11 +56,9 @@ def getProcessParam(cleanParam):
             "unCertainErrorToNaN": uncertainParam
         }
         imputation_param = {
-            "serialImputation": {
-                "flag": False,
-                "imputation_method": [{"min": 0, "max": 3, "method": "linear", "parameter": {}}],
-                "totalNonNanRatio": 80
-            }
+            "flag": False,
+            "imputation_method": [{"min": 0, "max": 3, "method": "linear", "parameter": {}}],
+            "totalNonNanRatio": 80
         }
 
     else:
@@ -75,11 +73,9 @@ def getProcessParam(cleanParam):
             "unCertainErrorToNaN": uncertainParam
         }
         imputation_param = {
-            "serialImputation": {
                 "flag": False,
                 "imputation_method": [],
                 "totalNonNanRatio": 80
-            }
         }
 
     process_param = {'refine_param': refine_param,
@@ -89,7 +85,7 @@ def getProcessParam(cleanParam):
 
 def getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration):
     integration_param = {
-        "granularity_sec": integration_freq_sec,
+        "integration_frequency": integration_freq_sec,
         "integration_duration" : integration_duration,
         "param": method_param,
         "method": integration_method
