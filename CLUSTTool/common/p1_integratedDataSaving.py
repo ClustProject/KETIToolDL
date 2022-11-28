@@ -101,7 +101,7 @@ def getData(db_client, dataInfo, integration_freq_sec, processParam, startTime, 
     integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration)
 
     from Clust.clust.integration.integrationInterface import IntegrationInterface
-    data = IntegrationInterface().clustIntegrationFromInfluxSource(db_client, intDataInfo, processParam, integrationParam)
+    data = IntegrationInterface().integrationByInfluxInfo(db_client, intDataInfo, processParam, integrationParam)
 
     return data
 
@@ -109,7 +109,7 @@ def getIntDataFromDataset(integration_freq_sec, processParam, dataSet, integrati
     integrationParam = getIntegrationParam(integration_freq_sec, integration_method, method_param, integration_duration)
     
     from Clust.clust.integration.integrationInterface import IntegrationInterface
-    data = IntegrationInterface().clustIntegrationFromDataset(processParam, integrationParam, dataSet)
+    data = IntegrationInterface().multipleDatasetsIntegration(processParam, integrationParam, dataSet)
 
     return data
 
