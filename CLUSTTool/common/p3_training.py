@@ -45,9 +45,9 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     NanInfoForCleanData=NaNProcessingParam['NanInfoForCleanData']
 
     feature_list = dataSet.columns
-    from Clust.clust.transformation.quality.dataByCycle import cycle_Module
+    from Clust.clust.transformation.splitDataByCycle import dataByCycle
 
-    dayCycle = cycle_Module.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
+    dayCycle = dataByCycle.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
     import matplotlib.pyplot as plt
 
     from Clust.clust.preprocessing.quality.NaN import clean_feature_data
