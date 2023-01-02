@@ -4,6 +4,7 @@ sys.path.append("../../")
 sys.path.append("../../../")
 from KETIToolDL.CLUSTTool.common import p1_integratedDataSaving as p1
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
     if cleanTrainDataParam =='Clean':
@@ -48,12 +49,13 @@ def cleanNaNDF(dataSet, NaNProcessingParam, timedelta_frequency_sec):
     from Clust.clust.transformation.splitDataByCycle import dataByCycle
 
     dayCycle = dataByCycle.getCycleSelectDataSet(dataSet, feature_cycle, feature_cycle_times, timedelta_frequency_sec)
-    import matplotlib.pyplot as plt
 
-    from Clust.clust.preprocessing.quality.NaN import clean_feature_data
-    CMS = clean_feature_data.CleanFeatureData(feature_list, timedelta_frequency_sec)
+
+    from Clust.clust.quality.NaN import cleanData
+    CMS = cleanData.CleanFeatureData(feature_list, timedelta_frequency_sec)
     refinedData, filterImputedData = CMS.getMultipleCleanDataSetsByDF(dayCycle, NanInfoForCleanData)
     CleanData = pd.concat(filterImputedData.values())
+
     return CleanData
 
 def getModelFilePath(trainDataPathList, model_method):
