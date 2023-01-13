@@ -9,9 +9,13 @@ import matplotlib.pyplot as plt
 def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
     if cleanTrainDataParam =='Clean':
         import datetime
-        timedelta_frequency_sec = datetime.timedelta(seconds= integration_freq_sec)
-        train = cleanNaNDF(train, NaNProcessingParam, timedelta_frequency_sec)
-        val = cleanNaNDF(val, NaNProcessingParam, timedelta_frequency_sec)
+        # TODO integration_freq sec  사용을 안하는데 추후 문제될 수 있으니 확인해봐야 함
+        #timedelta_frequency_sec = datetime.timedelta(seconds= integration_freq_sec)
+        # 3. quality check
+        from Clust.clust.quality.NaN import cleanData
+        CMS = cleanData.CleanData()
+        train = CMS.get_cleanData_by_removing_column(train, NaNProcessingParam) 
+        val = CMS.get_cleanData_by_removing_column(val, NaNProcessingParam) 
 
     else:
         pass
