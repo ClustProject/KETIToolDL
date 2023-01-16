@@ -70,6 +70,7 @@ def getResultMetrics(test_x, test_y, model_method, target, modelFilePath, scaler
     pred, trues, mse, mae = ri.get_result(model, modelFilePath)
     df_result = p4.getPredictionDFResult(pred, trues, scalerParam, scaler_y, featureList= target, target_col = target[0])
     df_result.index = test_y.index
-    from KETIToolDataExploration.stats_table import metrics
+    from Clust.clust.tool.stats_table import metrics
     result_metrics =  metrics.calculate_metrics_df(df_result)
     return df_result, result_metrics
+

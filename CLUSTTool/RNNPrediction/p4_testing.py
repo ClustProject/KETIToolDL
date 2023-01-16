@@ -45,8 +45,8 @@ def getTestResult(dataName, modelName, DataMeta, ModelMeta, dataRoot, db_client)
     
     df_result.index = test.index
     """
-    from KETIToolDataExploration.stats_table import metrics
+    from Clust.clust.tool.stats_table import metrics
     result_metrics =  metrics.calculate_metrics_df(df_result)
-
+    
     return df_result, result_metrics
 
