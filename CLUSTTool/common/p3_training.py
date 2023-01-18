@@ -7,15 +7,18 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def deleteLowQualityTrainValidationData(train, val, cleanTrainDataParam, integration_freq_sec, NaNProcessingParam):
+    print("------", NaNProcessingParam)
     if cleanTrainDataParam =='Clean':
         import datetime
         # TODO integration_freq sec  사용을 안하는데 추후 문제될 수 있으니 확인해봐야 함
         #timedelta_frequency_sec = datetime.timedelta(seconds= integration_freq_sec)
         # 3. quality check
+        NanInfoForCleanData = NaNProcessingParam['NanInfoForCleanData']
+        print("------", NanInfoForCleanData)
         from Clust.clust.quality.NaN import cleanData
         CMS = cleanData.CleanData()
-        train = CMS.get_cleanData_by_removing_column(train, NaNProcessingParam) 
-        val = CMS.get_cleanData_by_removing_column(val, NaNProcessingParam) 
+        train = CMS.get_cleanData_by_removing_column(train, NanInfoForCleanData) 
+        val = CMS.get_cleanData_by_removing_column(val, NanInfoForCleanData) 
 
     else:
         pass

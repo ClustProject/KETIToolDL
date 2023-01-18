@@ -62,10 +62,6 @@ class BritsTrainer(Trainer):
         torch.save(model.state_dict(), self.modelFilePath[1])
         print(self.modelFilePath)
 
-def a(data, transformParameter, cleanParam):
-    LSTMD = LSTMData()
-    dataX_arr, datay_arr = LSTMD.transformXyArr(data, transformParameter, cleanParam)
-    return dataX_arr, datay_arr
 # Model 2: RNN 계열
 class RNNStyleModelTrainer(Trainer):
     def processInputData(self, train, val, transformParameter, cleanParam, batch_size):
